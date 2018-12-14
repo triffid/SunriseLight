@@ -1,0 +1,10 @@
+.*
+*.png
+*.txt
+*.csv
+*.xlsx
+*.b#?
+*.s#?
+*.g[mbt]?
+*.scad
+*.zip
