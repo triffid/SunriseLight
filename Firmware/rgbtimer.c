@@ -32,14 +32,14 @@ typedef struct __attribute__ ((packed)) {
 void hsv2rgb(rgb* o, float h, float s, float v);
 
 void rgbtimer_init() {
-	NVIC_SetPriority(    TIMER0_IRQn, 15); // Lowest priority
-	NVIC_ClearPendingIRQ(TIMER0_IRQn);
-	NVIC_EnableIRQ(      TIMER0_IRQn);
+	NVIC_SetPriority(    TIMER1_IRQn, 15); // Lowest priority
+	NVIC_ClearPendingIRQ(TIMER1_IRQn);
+	NVIC_EnableIRQ(      TIMER1_IRQn);
 
-	nrf_timer_mode_set(     NRF_TIMER0, NRF_TIMER_MODE_TIMER);
-	nrf_timer_bit_width_set(NRF_TIMER0, NRF_TIMER_BIT_WIDTH_8);
-	nrf_timer_frequency_set(NRF_TIMER0, NRF_TIMER_FREQ_500kHz);
-	nrf_timer_cc_write(     NRF_TIMER0, NRF_TIMER_CC_CHANNEL0, 2);
+	nrf_timer_mode_set(     NRF_TIMER1, NRF_TIMER_MODE_TIMER);
+	nrf_timer_bit_width_set(NRF_TIMER1, NRF_TIMER_BIT_WIDTH_8);
+	nrf_timer_frequency_set(NRF_TIMER1, NRF_TIMER_FREQ_500kHz);
+	nrf_timer_cc_write(     NRF_TIMER1, NRF_TIMER_CC_CHANNEL0, 2);
 }
 
 void rgbtimer_setrgb(float r, float g, float b) {
@@ -61,22 +61,22 @@ void rgbtimer_sethsv(float h, float s, float v) {
 }
 
 void rgbtimer_start() {
-	nrf_timer_int_enable(   NRF_TIMER0, NRF_TIMER_INT_COMPARE0_MASK );
-	nrf_timer_task_trigger( NRF_TIMER0, NRF_TIMER_TASK_START);
+	nrf_timer_int_enable(   NRF_TIMER1, NRF_TIMER_INT_COMPARE0_MASK );
+	nrf_timer_task_trigger( NRF_TIMER1, NRF_TIMER_TASK_START);
 }
 
 void rgbtimer_stop() {
-	nrf_timer_int_disable(  NRF_TIMER0, NRF_TIMER_INT_COMPARE0_MASK );
-	nrf_timer_task_trigger( NRF_TIMER0, NRF_TIMER_TASK_STOP);
+	nrf_timer_int_disable(  NRF_TIMER1, NRF_TIMER_INT_COMPARE0_MASK );
+	nrf_timer_task_trigger( NRF_TIMER1, NRF_TIMER_TASK_STOP);
 }
 
-void TIMER0_IRQHandler(void) {
+void TIMER1_IRQHandler(void) {
 	SigmaDelta_run(&blue);
 	SigmaDelta_run(&red);
 	SigmaDelta_run(&green);
 
-	nrf_timer_event_clear(NRF_TIMER0, NRF_TIMER_EVENT_COMPARE0);
-	nrf_timer_task_trigger(NRF_TIMER0, NRF_TIMER_TASK_CLEAR);
+	nrf_timer_event_clear(NRF_TIMER1, NRF_TIMER_EVENT_COMPARE0);
+	nrf_timer_task_trigger(NRF_TIMER1, NRF_TIMER_TASK_CLEAR);
 }
 
 // from https://stackoverflow.com/a/34407200
