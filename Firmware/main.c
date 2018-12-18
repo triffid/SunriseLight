@@ -53,6 +53,7 @@
 
 #include <stdbool.h>
 #include <stdint.h>
+
 #include <string.h>
 
 #include <math.h>
@@ -92,11 +93,10 @@
 #include "components/libraries/experimental_log/nrf_log_ctrl.h"
 #include "components/libraries/experimental_log/nrf_log_default_backends.h"
 
-#include "integration/nrfx/legacy/nrf_drv_clock.h"
-
 #include "sigmadelta.h"
 #include "rgbtimer.h"
-
+#include "redshift_hook.h"
+#include "clock.h"
 
 #define DEVICE_NAME                     "Nordic_Template"                       /**< Name of device. Will be included in the advertising data. */
 #define MANUFACTURER_NAME               "NordicSemiconductor"                   /**< Manufacturer. Will be passed to Device Information Service. */
@@ -130,7 +130,6 @@
 NRF_BLE_GATT_DEF(m_gatt);                                                       /**< GATT module instance. */
 NRF_BLE_QWR_DEF(m_qwr);                                                         /**< Context for the Queued Write module.*/
 BLE_ADVERTISING_DEF(m_advertising);                                             /**< Advertising module instance. */
-APP_TIMER_DEF(m_app_timer_id);
 
 static uint16_t m_conn_handle = BLE_CONN_HANDLE_INVALID;                        /**< Handle of the current connection. */
 
@@ -261,28 +260,6 @@ static void pm_evt_handler(pm_evt_t const * p_evt)
             break;
     }
 }
-
-void timer_timeout_handler(void* p_context) {
-	static unsigned angle = 0;
-	angle = (angle + 1) % 60;
-	rgbtimer_sethsv(angle * M_PI_F / 30, 1, 0.125f);
-}
-
-/**@brief Function for the Timer initialization.
- *
- * @details Initializes the timer module. This creates and starts application timers.
- */
-static void timers_init(void)
-{
-    // Initialize timer module.
-    ret_code_t err_code = app_timer_init();
-    APP_ERROR_CHECK(err_code);
-
-    // Create timers.
-	err_code = app_timer_create(&m_app_timer_id, APP_TIMER_MODE_REPEATED, timer_timeout_handler);
-	APP_ERROR_CHECK(err_code);
-}
-
 
 /**@brief Function for the GAP initialization.
  *
@@ -458,27 +435,24 @@ static void conn_params_init(void)
     APP_ERROR_CHECK(err_code);
 }
 
+/**@brief Function for the Timer initialization.
+ *
+ * @details Initializes the timer module. This creates and starts application timers.
+ */
+static void timers_init(void)
+{
+	// Initialize timer module.
+	ret_code_t err_code = app_timer_init();
+	APP_ERROR_CHECK(err_code);
 
-static void timer_event_handler(nrf_drv_clock_evt_type_t event) {
+	clock_init();
 }
 
 /**@brief Function for starting timers.
  */
 static void application_timers_start(void)
 {
-	ret_code_t err_code;
-	if (nrf_drv_clock_init_check() == false) {
-		err_code = nrf_drv_clock_init();
-		APP_ERROR_CHECK(err_code);
-	}
-
-	static nrf_drv_clock_handler_item_t lfclk_req = {NULL, timer_event_handler};
-	nrf_drv_clock_lfclk_request(&lfclk_req);
-
-	err_code = app_timer_start(m_app_timer_id, 32768 * 60, NULL); // 32768*60 = once per minute
-	APP_ERROR_CHECK(err_code);
 }
-
 
 /**@brief Function for putting the chip into sleep mode.
  *
@@ -825,15 +799,17 @@ int main(void)
     application_timers_start();
 	rgbtimer_init();
 	rgbtimer_start();
+	redshift_init();
 
 //     advertising_start(erase_bonds);
-
-	timer_timeout_handler(NULL);
 
     // Enter main loop.
     for (;;)
     {
 		idle_state_handle();
+		if (clock_secondsflag()) {
+			redshift_update();
+		}
 	}
 }
 

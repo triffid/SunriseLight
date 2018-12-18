@@ -39,7 +39,7 @@ void rgbtimer_init() {
 	nrf_timer_mode_set(     NRF_TIMER0, NRF_TIMER_MODE_TIMER);
 	nrf_timer_bit_width_set(NRF_TIMER0, NRF_TIMER_BIT_WIDTH_8);
 	nrf_timer_frequency_set(NRF_TIMER0, NRF_TIMER_FREQ_500kHz);
-	nrf_timer_cc_write(     NRF_TIMER0, NRF_TIMER_CC_CHANNEL0, 8);
+	nrf_timer_cc_write(     NRF_TIMER0, NRF_TIMER_CC_CHANNEL0, 2);
 }
 
 void rgbtimer_setrgb(float r, float g, float b) {

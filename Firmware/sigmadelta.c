@@ -20,6 +20,7 @@ void SigmaDelta_set(SigmaDelta_t* self, int value) {
 void SigmaDelta_run(SigmaDelta_t* self) {
 	// skip sanity check for speed
 
+	// accumulate value
 	self->accumulator += self->value;
 
 	// if we didn't overflow, set output low

@@ -6,10 +6,15 @@ SDK_ROOT := $(HOME)/Projects/NRF/nRF5_SDK
 PROJ_DIR := $(shell realpath .)
 
 $(OUTPUT_DIRECTORY)/nrf52832_xxaa.out: \
-  LINKER_SCRIPT  := ble_app_template_gcc_nrf52.ld
+  LINKER_SCRIPT  := SunriseLight.ld
 
 # Source files common to all targets
 SRC_FILES += \
+  $(wildcard $(PROJ_DIR)/*.c) \
+  $(PROJ_DIR)/redshift/src/colorramp.c \
+  $(PROJ_DIR)/redshift/src/solar.c \
+  $(PROJ_DIR)/redshift/src/systemtime.c \
+  $(PROJ_DIR)/redshift/src/location-manual.c \
   $(SDK_ROOT)/modules/nrfx/mdk/gcc_startup_nrf52.S \
   $(SDK_ROOT)/components/libraries/experimental_log/src/nrf_log_backend_rtt.c \
   $(SDK_ROOT)/components/libraries/experimental_log/src/nrf_log_backend_serial.c \
@@ -50,7 +55,6 @@ SRC_FILES += \
   $(SDK_ROOT)/modules/nrfx/drivers/src/prs/nrfx_prs.c \
   $(SDK_ROOT)/modules/nrfx/drivers/src/nrfx_uart.c \
   $(SDK_ROOT)/modules/nrfx/drivers/src/nrfx_uarte.c \
-  $(wildcard $(PROJ_DIR)/*.c) \
   $(SDK_ROOT)/external/segger_rtt/SEGGER_RTT.c \
   $(SDK_ROOT)/external/segger_rtt/SEGGER_RTT_Syscalls_GCC.c \
   $(SDK_ROOT)/external/segger_rtt/SEGGER_RTT_printf.c \
@@ -82,6 +86,7 @@ SRC_FILES += \
 # Include folders common to all targets
 INC_FOLDERS += \
   $(PROJ_DIR) \
+  $(PROJ_DIR)/redshift/src \
   $(SDK_ROOT) \
   $(SDK_ROOT)/components/nfc/ndef/generic/message \
   $(SDK_ROOT)/components/nfc/t2t_lib \
@@ -234,6 +239,8 @@ CFLAGS += -DNRF_SD_BLE_API_VERSION=6
 CFLAGS += -DS132
 CFLAGS += -DSOFTDEVICE_PRESENT
 CFLAGS += -DSWI_DISABLE0
+CFLAGS += -DSTART_DATE=$(shell date +%s)
+CFLAGS += -DM_PI=3.14159265358979323846
 CFLAGS += -mcpu=cortex-m4
 CFLAGS += -mthumb -mabi=aapcs
 CFLAGS += -Wall
