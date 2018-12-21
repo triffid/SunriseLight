@@ -492,7 +492,7 @@ static void ble_evt_handler(ble_evt_t const * p_ble_evt, void * p_context)
 	}
 
 	// dispatch
-	sunrise_ble_sunriseService_on_ble_evt(p_ble_evt, p_context);
+// 	sunrise_ble_sunriseService_on_ble_evt(p_ble_evt, p_context);
 }
 
 

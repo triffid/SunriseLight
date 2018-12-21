@@ -2,8 +2,20 @@
 
 #include <strings.h>
 
-#include "components/libraries/experimental_log/nrf_log.h"
+#include "modules/nrfx/mdk/nrf.h"
+
+#include "components/libraries/util/nordic_common.h"
 #include "components/libraries/util/app_error.h"
+
+#include "components/libraries/experimental_log/nrf_log.h"
+
+#include "components/ble/common/ble_srv_common.h"
+#include "components/softdevice/s132/headers/ble.h"
+
+#include "components/softdevice/common/nrf_sdh.h"
+#include "components/softdevice/common/nrf_sdh_ble.h"
+
+#include "clock.h"
 
 #define SUNRISE_BLE_UUID128 {{ 0x86, 0xc6, 0xe6, 0x24, 0xbc, 0x3b, 0xcc, 0xcf, 0x3e, 0x1d, 0x57, 0xa2, 0x00, 0x00, 0x26, 0x78 }}
 
@@ -15,11 +27,15 @@ typedef struct {
 
 static ble_os_t p_service;
 
-void sunrise_ble_sunriseService_on_ble_evt(ble_evt_t const * p_ble_evt, void* p_context) {
-	ble_gatts_evt_write_t * p_evt_write = &p_ble_evt->evt.gatts_evt.params.write;
+static void sunrise_ble_sunriseService_on_ble_evt(ble_evt_t const * p_ble_evt, void* p_context) {
+	const ble_gatts_evt_write_t * p_evt_write = &p_ble_evt->evt.gatts_evt.params.write;
 
-	if (p_evt_write->handle != p_service.char_handles.value_handle)
+	NRF_LOG_INFO("Sunrise Event");
+
+	if (p_evt_write->handle != p_service.char_handles.value_handle) {
+		NRF_LOG_INFO("Sunrise bad handle");
 		return;
+	}
 
 	switch (p_ble_evt->header.evt_id) {
 		case BLE_GAP_EVT_CONNECTED: {
@@ -33,6 +49,14 @@ void sunrise_ble_sunriseService_on_ble_evt(ble_evt_t const * p_ble_evt, void* p_
 			r.type = BLE_GATTS_AUTHORIZE_TYPE_WRITE;
 // 			r.
 			sd_ble_gatts_rw_authorize_reply(p_service.conn_handle, &r);
+		} break;
+		case BLE_GATTS_EVT_WRITE: {
+			const ble_gatts_evt_t* e       = &p_ble_evt->evt.gatts_evt;
+			const ble_gatts_evt_write_t* w = &e->params.write;
+
+			NRF_LOG_INFO("Sunrise write event: ch 0x%02x h 0x%02x offset %u len %u data %u", e->conn_handle, w->handle, w->offset, w->len, *((uint32_t*) w->data));
+
+			clock_setseconds(*((uint32_t*) w->data));
 		} break;
 		default:
 			break;
@@ -85,7 +109,8 @@ static uint32_t sunrise_ble_sunriseService_add_characteristic() {
 
 	attr_char_value.max_len     = 4;
 	attr_char_value.init_len    = 4;
-	int32_t value               = -3;
+	static uint32_t value;
+	value = clock_getseconds();
 	attr_char_value.p_value     = (uint8_t*) &value;
 
 	err_code = sd_ble_gatts_characteristic_add(p_service.service_handle, &char_md, &attr_char_value, &p_service.char_handles);
@@ -119,4 +144,6 @@ void sunrise_ble_sunriseService_init() {
 
 	// OUR_JOB: Call the function our_char_add() to add our new characteristic to the service.
 	sunrise_ble_sunriseService_add_characteristic(&p_service);
+
+	NRF_SDH_BLE_OBSERVER(m_ble_observer, 3, sunrise_ble_sunriseService_on_ble_evt, NULL);
 }
