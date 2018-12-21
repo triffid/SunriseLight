@@ -6,6 +6,8 @@
 #include "components/libraries/bsp/bsp.h"
 #include "components/libraries/experimental_log/nrf_log.h"
 
+#include "clock.h"
+
 #define NUM_HANDLERS 8
 
 static State_t _state = OFF;
@@ -36,8 +38,10 @@ void Sunrise_State_init(void) {
 }
 
 void Sunrise_State_poll(void) {
-	if (nrf_gpio_pin_read(VMEAS) == 0)
+	if (nrf_gpio_pin_read(VMEAS) == 0) {
 		Sunrise_StateChange(OFF);
+		NRF_LOG_INFO("No power, time is %u", clock_getseconds());
+	}
 	else if (_state == OFF)
 		Sunrise_StateChange(ON);
 	else {

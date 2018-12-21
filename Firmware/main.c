@@ -123,10 +123,11 @@ static void idle_state_handle(void)
     {
         nrf_pwr_mgmt_run();
     }
-	if (clock_secondsflag()) {
+
+    if (clock_secondsflag()) {
 		redshift_update();
+		Sunrise_State_poll();
 	}
-	Sunrise_State_poll();
 }
 
 void app_error_fault_handler(uint32_t id, uint32_t pc, uint32_t info) {
