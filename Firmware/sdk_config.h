@@ -1229,7 +1229,7 @@
  
 
 #ifndef NRF_DFU_BLE_BUTTONLESS_SUPPORTS_BONDS
-#define NRF_DFU_BLE_BUTTONLESS_SUPPORTS_BONDS 0
+#define NRF_DFU_BLE_BUTTONLESS_SUPPORTS_BONDS 1
 #endif
 
 // </h> 
@@ -2406,7 +2406,7 @@
 // <e> NRFX_POWER_ENABLED - nrfx_power - POWER peripheral driver
 //==========================================================
 #ifndef NRFX_POWER_ENABLED
-#define NRFX_POWER_ENABLED 0
+#define NRFX_POWER_ENABLED 1
 #endif
 // <o> NRFX_POWER_CONFIG_IRQ_PRIORITY  - Interrupt priority
  
@@ -2429,7 +2429,7 @@
 // <i> This settings means only that components for DCDC regulator are installed and it can be enabled.
 
 #ifndef NRFX_POWER_CONFIG_DEFAULT_DCDCEN
-#define NRFX_POWER_CONFIG_DEFAULT_DCDCEN 0
+#define NRFX_POWER_CONFIG_DEFAULT_DCDCEN 1
 #endif
 
 // <q> NRFX_POWER_CONFIG_DEFAULT_DCDCENHV  - The default configuration of High Voltage DCDC regulator
@@ -4585,7 +4585,7 @@
 // <e> POWER_ENABLED - nrf_drv_power - POWER peripheral driver - legacy layer
 //==========================================================
 #ifndef POWER_ENABLED
-#define POWER_ENABLED 0
+#define POWER_ENABLED 1
 #endif
 // <o> POWER_CONFIG_IRQ_PRIORITY  - Interrupt priority
  
@@ -4611,15 +4611,6 @@
 
 #ifndef POWER_CONFIG_DEFAULT_DCDCEN
 #define POWER_CONFIG_DEFAULT_DCDCEN 1
-#endif
-
-// <q> POWER_CONFIG_DEFAULT_DCDCENHV  - The default configuration of High Voltage DCDC regulator
- 
-
-// <i> This settings means only that components for DCDC regulator are installed and it can be enabled.
-
-#ifndef POWER_CONFIG_DEFAULT_DCDCENHV
-#define POWER_CONFIG_DEFAULT_DCDCENHV 0
 #endif
 
 // </e>
@@ -5823,7 +5814,7 @@
  
 
 #ifndef APP_GPIOTE_ENABLED
-#define APP_GPIOTE_ENABLED 0
+#define APP_GPIOTE_ENABLED 1
 #endif
 
 // <q> APP_PWM_ENABLED  - app_pwm - PWM functionality
@@ -6837,7 +6828,7 @@
 // <i> Selected pin will be set when CPU is in sleep mode.
 //==========================================================
 #ifndef NRF_PWR_MGMT_CONFIG_DEBUG_PIN_ENABLED
-#define NRF_PWR_MGMT_CONFIG_DEBUG_PIN_ENABLED 0
+#define NRF_PWR_MGMT_CONFIG_DEBUG_PIN_ENABLED 1
 #endif
 // <o> NRF_PWR_MGMT_SLEEP_DEBUG_PIN  - Pin number
  
@@ -6876,7 +6867,7 @@
 // <4294967295=> Not connected 
 
 #ifndef NRF_PWR_MGMT_SLEEP_DEBUG_PIN
-#define NRF_PWR_MGMT_SLEEP_DEBUG_PIN 31
+#define NRF_PWR_MGMT_SLEEP_DEBUG_PIN 14
 #endif
 
 // </e>
@@ -6915,7 +6906,7 @@
  
 
 #ifndef NRF_PWR_MGMT_CONFIG_AUTO_SHUTDOWN_RETRY
-#define NRF_PWR_MGMT_CONFIG_AUTO_SHUTDOWN_RETRY 0
+#define NRF_PWR_MGMT_CONFIG_AUTO_SHUTDOWN_RETRY 1
 #endif
 
 // <q> NRF_PWR_MGMT_CONFIG_USE_SCHEDULER  - Module will use @ref app_scheduler.
@@ -11461,7 +11452,7 @@
 
 // <o> NRF_SDH_BLE_VS_UUID_COUNT - The number of vendor-specific UUIDs. 
 #ifndef NRF_SDH_BLE_VS_UUID_COUNT
-#define NRF_SDH_BLE_VS_UUID_COUNT 0
+#define NRF_SDH_BLE_VS_UUID_COUNT 2
 #endif
 
 // <q> NRF_SDH_BLE_SERVICE_CHANGED  - Include the Service Changed characteristic in the Attribute Table.

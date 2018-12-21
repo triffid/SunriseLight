@@ -58,17 +58,22 @@
 
 #include "components/libraries/util/app_error.h"
 #include "components/libraries/timer/app_timer.h"
+#include "components/libraries/gpiote/app_gpiote.h"
 
 #include "components/libraries/experimental_log/nrf_log.h"
 #include "components/libraries/experimental_log/nrf_log_ctrl.h"
 #include "components/libraries/experimental_log/nrf_log_default_backends.h"
 #include "components/libraries/pwr_mgmt/nrf_pwr_mgmt.h"
 
+#include "modules/nrfx/drivers/include/nrfx_power.h"
+
 #include "sigmadelta.h"
 #include "rgbtimer.h"
 #include "redshift_hook.h"
 #include "clock.h"
 #include "sunrise_ble.h"
+#include "sunrise_ble_dfu.h"
+#include "Sunrise_State.h"
 
 /**@brief Function for the Timer initialization.
  *
@@ -101,6 +106,12 @@ static void power_management_init(void)
     APP_ERROR_CHECK(err_code);
 }
 
+static void power_init(void)
+{
+	nrfx_power_config_t pwr = { 1 };
+	nrfx_power_init(&pwr);
+}
+
 
 /**@brief Function for handling the idle state (main loop).
  *
@@ -112,10 +123,14 @@ static void idle_state_handle(void)
     {
         nrf_pwr_mgmt_run();
     }
+	if (clock_secondsflag()) {
+		redshift_update();
+	}
+	Sunrise_State_poll();
 }
 
 void app_error_fault_handler(uint32_t id, uint32_t pc, uint32_t info) {
-	NRF_LOG_DEBUG("id %u pc %u info %u\n", id, pc, info);
+	NRF_LOG_ERROR("id 0x%08x pc 0x%08x info 0x%08x\n", id, pc, info);
 	for (;;);
 }
 
@@ -125,11 +140,18 @@ int main(void)
 {
     // Initialize.
     log_init();
+
+	power_init();
+
+	Sunrise_State_init();
+
+	APP_GPIOTE_INIT(8);
     timers_init();
 	clock_init();
     power_management_init();
 
-	ble_init();
+	sunrise_ble_init();
+	sunrise_ble_dfu_init();
 
 	rgbtimer_init();
 	rgbtimer_start();
@@ -141,12 +163,7 @@ int main(void)
 
 	// Enter main loop.
     for (;;)
-    {
 		idle_state_handle();
-		if (clock_secondsflag()) {
-			redshift_update();
-		}
-	}
 }
 
 

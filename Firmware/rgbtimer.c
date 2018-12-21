@@ -2,20 +2,15 @@
 
 #include <math.h>
 
-#ifndef M_PI_F
-#define M_PI_F 3.141592653589f
-#endif
-
 #include "components/libraries/bsp/bsp_btn_ble.h"
-
-#include "nrf.h"
-#include "nrf_gpio.h"
-
 #include "components/libraries/experimental_log/nrf_log.h"
 
+#include "modules/nrfx/mdk/nrf.h"
+#include "modules/nrfx/hal/nrf_gpio.h"
 #include "modules/nrfx/hal/nrf_timer.h"
 
 #include "sigmadelta.h"
+#include "Sunrise_State.h"
 
 #define RESOLUTION 4096
 
@@ -31,6 +26,14 @@ typedef struct __attribute__ ((packed)) {
 
 void hsv2rgb(rgb* o, float h, float s, float v);
 
+
+void rgbtimer_StateChangeHandler(State_t new) {
+	if (new == ON)
+		rgbtimer_start();
+	else
+		rgbtimer_stop();
+}
+
 void rgbtimer_init() {
 	NVIC_SetPriority(    TIMER1_IRQn, 15); // Lowest priority
 	NVIC_ClearPendingIRQ(TIMER1_IRQn);
@@ -40,12 +43,21 @@ void rgbtimer_init() {
 	nrf_timer_bit_width_set(NRF_TIMER1, NRF_TIMER_BIT_WIDTH_8);
 	nrf_timer_frequency_set(NRF_TIMER1, NRF_TIMER_FREQ_500kHz);
 	nrf_timer_cc_write(     NRF_TIMER1, NRF_TIMER_CC_CHANNEL0, 2);
+
+	SigmaDelta_init(&red);
+	SigmaDelta_init(&green);
+	SigmaDelta_init(&blue);
+
+	Sunrise_State_RegisterStateChangeHandler(&rgbtimer_StateChangeHandler);
 }
 
 void rgbtimer_setrgb(float r, float g, float b) {
-	if (r > 1) r = 1; if (r < 0) r = 0;
-	if (g > 1) g = 1; if (g < 0) g = 0;
-	if (b > 1) b = 1; if (b < 0) b = 0;
+	if (r > 1) r = 1;
+	if (r < 0) r = 0;
+	if (g > 1) g = 1;
+	if (g < 0) g = 0;
+	if (b > 1) b = 1;
+	if (b < 0) b = 0;
 	red.value   = r * RESOLUTION;
 	green.value = g * RESOLUTION;
 	blue.value  = b * RESOLUTION;
@@ -68,6 +80,7 @@ void rgbtimer_start() {
 void rgbtimer_stop() {
 	nrf_timer_int_disable(  NRF_TIMER1, NRF_TIMER_INT_COMPARE0_MASK );
 	nrf_timer_task_trigger( NRF_TIMER1, NRF_TIMER_TASK_STOP);
+	bsp_board_leds_off();
 }
 
 void TIMER1_IRQHandler(void) {
@@ -81,9 +94,9 @@ void TIMER1_IRQHandler(void) {
 
 // from https://stackoverflow.com/a/34407200
 void hsv2rgb(rgb* o, float h, float s, float v) {
-	h = fmod(h, 2 * M_PI_F);
+	h = fmod(h, 2 * ((float) M_PI));
 	float r, g, b, p, q, t, fract;
-	float h_ = h * 3 / M_PI_F;
+	float h_ = h * 3 / ((float) M_PI);
 	fract = h_ - floor(h_);
 	p = v * (1.0f - s);
 	q = v * (1.0f - (s * fract));

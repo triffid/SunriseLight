@@ -2,8 +2,8 @@
 
 #include "modules/nrfx/hal/nrf_gpio.h"
 
-void SigmaDelta_init(SigmaDelta_t* self, uint32_t pin, int max, int value) {
-	nrf_gpio_cfg_output(pin);
+void SigmaDelta_init(SigmaDelta_t* self) {
+	nrf_gpio_cfg_output(self->pin);
 }
 
 void SigmaDelta_set(SigmaDelta_t* self, int value) {

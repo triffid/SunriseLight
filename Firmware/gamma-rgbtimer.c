@@ -46,13 +46,13 @@ static int
 gamma_rgbtimer_set_temperature(
 	void *state, const color_setting_t *setting, int preserve)
 {
-	printf(_("Temperature: %i"), setting->temperature);
+// 	printf(_("Temperature: %i"), setting->temperature);
 
 	float r = 1, g = 1, b = 1;
 
 	colorramp_fill_float(&r, &g, &b, 1, setting);
 
-	printf(_("RGB: %u%% %u%% %u%%"), (int) (r * 100), (int) (g * 100), (int) (b * 100));
+// 	printf(_("RGB: %u%% %u%% %u%%"), (int) (r * 100), (int) (g * 100), (int) (b * 100));
 
 	rgbtimer_setrgb(r, g * 0.33f, b * 0.33f);
 

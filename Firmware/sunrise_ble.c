@@ -1,4 +1,4 @@
-#include "ble.h"
+#include "sunrise_ble.h"
 
 #include "modules/nrfx/mdk/nrf.h"
 
@@ -11,6 +11,7 @@
 
 #include "components/softdevice/s132/headers/ble.h"
 #include "components/softdevice/s132/headers/ble_hci.h"
+#include "components/softdevice/s132/headers/ble_gatts.h"
 
 #include "components/softdevice/common/nrf_sdh.h"
 #include "components/softdevice/common/nrf_sdh_soc.h"
@@ -28,7 +29,10 @@
 
 #include "components/libraries/experimental_log/nrf_log.h"
 
-#define DEVICE_NAME                     "SunriseLamp"                           /**< Name of device. Will be included in the advertising data. */
+#include "sunrise_ble_sunriseService.h"
+#include "Sunrise_State.h"
+
+#define DEVICE_NAME                     "SunriseLight"                           /**< Name of device. Will be included in the advertising data. */
 #define MANUFACTURER_NAME               "Triffid Hunter"                        /**< Manufacturer. Will be passed to Device Information Service. */
 #define APP_ADV_INTERVAL                300                                     /**< The advertising interval (in units of 0.625 ms. This value corresponds to 187.5 ms). */
 
@@ -46,8 +50,8 @@
 #define MAX_CONN_PARAMS_UPDATE_COUNT    3                                       /**< Number of attempts before giving up the connection parameter negotiation. */
 
 #define SEC_PARAM_BOND                  1                                       /**< Perform bonding. */
-#define SEC_PARAM_MITM                  0                                       /**< Man In The Middle protection not required. */
-#define SEC_PARAM_LESC                  0                                       /**< LE Secure Connections not enabled. */
+#define SEC_PARAM_MITM                  0                                       /**< Man In The Middle protection required. */
+#define SEC_PARAM_LESC                  0                                       /**< LE Secure Connections enabled. */
 #define SEC_PARAM_KEYPRESS              0                                       /**< Keypress notifications not enabled. */
 #define SEC_PARAM_IO_CAPABILITIES       BLE_GAP_IO_CAPS_NONE                    /**< No I/O capabilities. */
 #define SEC_PARAM_OOB                   0                                       /**< Out Of Band data not available. */
@@ -72,8 +76,6 @@ static ble_uuid_t m_adv_uuids[] =                                               
 {
 	{BLE_UUID_DEVICE_INFORMATION_SERVICE, BLE_UUID_TYPE_BLE}
 };
-
-static void advertising_start(bool erase_bonds);
 
 /**@brief Callback function for asserts in the SoftDevice.
  *
@@ -149,7 +151,7 @@ static void pm_evt_handler(pm_evt_t const * p_evt)
 
 		case PM_EVT_PEERS_DELETE_SUCCEEDED:
 		{
-			advertising_start(false);
+			APP_ERROR_CHECK(ble_advertising_start(&m_advertising, BLE_ADV_MODE_FAST));
 		} break;
 
 		case PM_EVT_PEER_DATA_UPDATE_FAILED:
@@ -207,9 +209,8 @@ static void gap_params_init(void)
 										  strlen(DEVICE_NAME));
 	APP_ERROR_CHECK(err_code);
 
-	/* YOUR_JOB: Use an appearance value matching the application's use case.
-	 *      err_code = sd_ble_gap_appearance_set(BLE_APPEARANCE_);
-	 *      APP_ERROR_CHECK(err_code); */
+	err_code = sd_ble_gap_appearance_set(BLE_APPEARANCE_GENERIC_REMOTE_CONTROL);
+	APP_ERROR_CHECK(err_code);
 
 	memset(&gap_conn_params, 0, sizeof(gap_conn_params));
 
@@ -258,18 +259,18 @@ static void nrf_qwr_error_handler(uint32_t nrf_error)
  s *tatic void on_yys_evt(ble_yy_service_t     * p_yy_service,
  ble_yy_service_evt_t * p_evt)
  {
- switch (p_evt->evt_type)
- {
-	 case BLE_YY_NAME_EVT_WRITE:
-		 APPL_LOG("[APPL]: charact written with value %s. ", p_evt->params.char_xx.value.p_str);
-		 break;
+	switch (p_evt->evt_type)
+	{
+		case BLE_YY_NAME_EVT_WRITE:
+			APPL_LOG("[APPL]: charact written with value %s. ", p_evt->params.char_xx.value.p_str);
+			break;
 
-	 default:
-		 // No implementation needed.
-		 break;
-		 }
-		 }
-		 */
+		default:
+			// No implementation needed.
+			break;
+	}
+}
+*/
 
 /**@brief Function for initializing services that will be used by the application.
  */
@@ -284,28 +285,7 @@ static void services_init(void)
 	err_code = nrf_ble_qwr_init(&m_qwr, &qwr_init);
 	APP_ERROR_CHECK(err_code);
 
-	/* YOUR_JOB: Add code to initialize the services used by the application.
-	 *      ble_xxs_init_t                     xxs_init;
-	 *      ble_yys_init_t                     yys_init;
-	 *
-	 *      // Initialize XXX Service.
-	 *      memset(&xxs_init, 0, sizeof(xxs_init));
-	 *
-	 *      xxs_init.evt_handler                = NULL;
-	 *      xxs_init.is_xxx_notify_supported    = true;
-	 *      xxs_init.ble_xx_initial_value.level = 100;
-	 *
-	 *      err_code = ble_bas_init(&m_xxs, &xxs_init);
-	 *      APP_ERROR_CHECK(err_code);
-	 *
-	 *      // Initialize YYY Service.
-	 *      memset(&yys_init, 0, sizeof(yys_init));
-	 *      yys_init.evt_handler                  = on_yys_evt;
-	 *      yys_init.ble_yy_initial_value.counter = 0;
-	 *
-	 *      err_code = ble_yy_service_init(&yys_init, &yy_init);
-	 *      APP_ERROR_CHECK(err_code);
-	 */
+	sunrise_ble_sunriseService_init();
 }
 
 
@@ -369,18 +349,18 @@ static void conn_params_init(void)
  */
 static void sleep_mode_enter(void)
 {
-	ret_code_t err_code;
+// 	ret_code_t err_code;
 
-	err_code = bsp_indication_set(BSP_INDICATE_IDLE);
-	APP_ERROR_CHECK(err_code);
+// 	err_code = bsp_indication_set(BSP_INDICATE_IDLE);
+// 	APP_ERROR_CHECK(err_code);
 
 	// Prepare wakeup buttons.
-	err_code = bsp_btn_ble_sleep_mode_prepare();
-	APP_ERROR_CHECK(err_code);
+// 	err_code = bsp_btn_ble_sleep_mode_prepare();
+// 	APP_ERROR_CHECK(err_code);
 
 	// Go to system-off mode (this function will not return; wakeup will cause a reset).
-	err_code = sd_power_system_off();
-	APP_ERROR_CHECK(err_code);
+// 	err_code = sd_power_system_off();
+// 	APP_ERROR_CHECK(err_code);
 }
 
 /**@brief Function for handling advertising events.
@@ -397,12 +377,44 @@ static void on_adv_evt(ble_adv_evt_t ble_adv_evt)
 	{
 		case BLE_ADV_EVT_FAST:
 			NRF_LOG_INFO("Fast advertising.");
-			err_code = bsp_indication_set(BSP_INDICATE_ADVERTISING);
-			APP_ERROR_CHECK(err_code);
+// 			pm_whitelist_set(NULL, 0); // anyone can bond
 			break;
-
+		case BLE_ADV_EVT_SLOW: {
+			NRF_LOG_INFO("Slow advertising.");
+// 			{
+// 				pm_peer_id_t peer_ids[8] = {PM_PEER_ID_INVALID};
+// 				uint32_t     n_peer_ids  = 0;
+//
+// 				pm_peer_id_t peer_id     = pm_next_peer_id_get(PM_PEER_ID_INVALID);
+// 				while((peer_id != PM_PEER_ID_INVALID) && (n_peer_ids < 8))
+// 				{
+// 					NRF_LOG_INFO("Peer 0x%04x allowed", peer_id);
+// 					peer_ids[n_peer_ids++] = peer_id;
+// 					peer_id = pm_next_peer_id_get(peer_id);
+// 				}
+//
+// 				err_code = pm_whitelist_set(peer_ids, n_peer_ids);
+// 				APP_ERROR_CHECK(err_code);
+// 			}
+		} break;
+// 		case BLE_ADV_EVT_WHITELIST_REQUEST: {
+// 			NRF_LOG_INFO("Whitelist request");
+// 			ret_code_t err_code;
+//
+// 			ble_gap_irk_t  irks[8]  = {0};
+// 			ble_gap_addr_t addrs[8] = {0};
+//
+// 			uint32_t irk_cnt  = 8;
+// 			uint32_t addr_cnt = 8;
+//
+// 			err_code = pm_whitelist_get(addrs, &addr_cnt, irks, &irk_cnt);
+// 			APP_ERROR_CHECK(err_code);
+//
+// 			err_code = ble_advertising_whitelist_reply(addrs, addr_cnt, irks, irk_cnt);
+// 			APP_ERROR_CHECK(err_code);
+// 		} break;
 		case BLE_ADV_EVT_IDLE:
-			sleep_mode_enter();
+			NRF_LOG_INFO("Idle.");
 			break;
 
 		default:
@@ -420,17 +432,16 @@ static void ble_evt_handler(ble_evt_t const * p_ble_evt, void * p_context)
 {
 	ret_code_t err_code = NRF_SUCCESS;
 
+	NRF_LOG_INFO("Got BLE event 0x%02x", p_ble_evt->header.evt_id);
+
 	switch (p_ble_evt->header.evt_id)
 	{
 		case BLE_GAP_EVT_DISCONNECTED:
 			NRF_LOG_INFO("Disconnected.");
-			// LED indication will be changed when advertising starts.
 			break;
 
 		case BLE_GAP_EVT_CONNECTED:
 			NRF_LOG_INFO("Connected.");
-			err_code = bsp_indication_set(BSP_INDICATE_CONNECTED);
-			APP_ERROR_CHECK(err_code);
 			m_conn_handle = p_ble_evt->evt.gap_evt.conn_handle;
 			err_code = nrf_ble_qwr_conn_handle_assign(&m_qwr, m_conn_handle);
 			APP_ERROR_CHECK(err_code);
@@ -456,6 +467,17 @@ static void ble_evt_handler(ble_evt_t const * p_ble_evt, void * p_context)
 			APP_ERROR_CHECK(err_code);
 			break;
 
+		case BLE_GATTS_EVT_WRITE: {
+			const ble_gatts_evt_t* e       = &p_ble_evt->evt.gatts_evt;
+			const ble_gatts_evt_write_t* w = &e->params.write;
+
+			NRF_LOG_INFO("GATTS write event: ch 0x%02x h 0x%02x op %u auth %u offset %u len %u", e->conn_handle, w->handle, w->op, w->auth_required, w->offset, w->len);
+		} break;
+
+		case BLE_GATTS_EVT_RW_AUTHORIZE_REQUEST: {
+			NRF_LOG_INFO("GATTS RW AUTH REQ");
+		} break;
+
 		case BLE_GATTS_EVT_TIMEOUT:
 			// Disconnect on GATT Server timeout event.
 			NRF_LOG_DEBUG("GATT Server Timeout.");
@@ -465,9 +487,12 @@ static void ble_evt_handler(ble_evt_t const * p_ble_evt, void * p_context)
 			break;
 
 		default:
-			// No implementation needed.
+
 			break;
 	}
+
+	// dispatch
+	sunrise_ble_sunriseService_on_ble_evt(p_ble_evt, p_context);
 }
 
 
@@ -603,29 +628,18 @@ static void advertising_init(void)
 	init.config.ble_adv_fast_interval = APP_ADV_INTERVAL;
 	init.config.ble_adv_fast_timeout  = APP_ADV_DURATION;
 
+	init.config.ble_adv_slow_enabled  = true;
+	init.config.ble_adv_slow_interval = 3200; // 2 seconds
+	init.config.ble_adv_slow_timeout  = 0;
+
+	init.config.ble_adv_on_disconnect_disabled = false;
+
 	init.evt_handler = on_adv_evt;
 
 	err_code = ble_advertising_init(&m_advertising, &init);
 	APP_ERROR_CHECK(err_code);
 
 	ble_advertising_conn_cfg_tag_set(&m_advertising, APP_BLE_CONN_CFG_TAG);
-}
-
-/**@brief Function for starting advertising.
- */
-static void advertising_start(bool erase_bonds)
-{
-	if (erase_bonds == true)
-	{
-		delete_bonds();
-		// Advertising is started by PM_EVT_PEERS_DELETED_SUCEEDED event
-	}
-	else
-	{
-		ret_code_t err_code = ble_advertising_start(&m_advertising, BLE_ADV_MODE_FAST);
-
-		APP_ERROR_CHECK(err_code);
-	}
 }
 
 /**@brief Function for initializing buttons and leds.
@@ -646,7 +660,23 @@ static void buttons_leds_init(bool * p_erase_bonds)
 	*p_erase_bonds = (startup_event == BSP_EVENT_CLEAR_BONDING_DATA);
 }
 
-void ble_init() {
+void sunrise_ble_state_change_handler(State_t new) {
+	if (new == OFF) {
+		// OFF -> shutdown ble
+		nrf_sdh_suspend();
+	}
+	else if (nrf_sdh_is_suspended()) {
+		// OFF to ON or SOFT_OFF -> ble running
+		nrf_sdh_resume();
+// 		APP_ERROR_CHECK(ble_advertising_start(&m_advertising, BLE_ADV_MODE_FAST));
+	}
+	else if (new == ON) {
+		// SOFT_OFF -> ON or start -> ON
+		APP_ERROR_CHECK(ble_advertising_start(&m_advertising, BLE_ADV_MODE_FAST));
+	}
+}
+
+void sunrise_ble_init() {
 	bool erase_bonds;
 
 	buttons_leds_init(&erase_bonds);
@@ -658,5 +688,9 @@ void ble_init() {
 	services_init();
 	conn_params_init();
 	peer_manager_init();
-	advertising_start(erase_bonds);
+
+	if (erase_bonds)
+		delete_bonds();
+
+	Sunrise_State_RegisterStateChangeHandler(&sunrise_ble_state_change_handler);
 }

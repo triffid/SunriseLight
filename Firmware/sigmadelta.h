@@ -10,7 +10,7 @@ typedef struct {
 	int accumulator;
 } SigmaDelta_t;
 
-void SigmaDelta_init(SigmaDelta_t*, uint32_t pin, int max, int value);
+void SigmaDelta_init(SigmaDelta_t*);
 
 void SigmaDelta_set(SigmaDelta_t*, int value);
 void SigmaDelta_run(SigmaDelta_t*);

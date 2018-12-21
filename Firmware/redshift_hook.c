@@ -10,6 +10,9 @@
 #include "components/libraries/experimental_log/nrf_log.h"
 
 #include "gamma-rgbtimer.h"
+#include "rgbtimer.h"
+
+#include "Sunrise_State.h"
 
 #define N_(s) s
 #define _(s) s
@@ -273,12 +276,12 @@ static void do_redshift_update(const transition_scheme_t *scheme,
 		return;
 	}
 
-	do {
+	if (verbose) {
 		location_t* loc = (location_t*) location_state;
 		unsigned t = now;
 		unsigned adj = t + ((int) roundf(loc->lon * 12 / 180)) * 3600; // approximate timezone compensation
 		printf("Time is %u = %d:%02d:%02d", t, (adj % 86400) / 3600, ((adj % 86400) % 3600) / 60, ((adj % 86400) % 60));
-	} while (0);
+	}
 
 	period_t period;
 	double transition_prog;
@@ -291,9 +294,9 @@ static void do_redshift_update(const transition_scheme_t *scheme,
 		/* Current angular elevation of the sun */
 		double elevation = solar_elevation(now, loc.lat, loc.lon);
 
-		do {
+		if (verbose) {
 			NRF_LOG_INFO("Elevation is " NRF_LOG_FLOAT_MARKER, NRF_LOG_FLOAT(elevation));
-		} while (0);
+		}
 
 		period = get_period_from_elevation(scheme, elevation);
 		transition_prog = get_transition_progress_from_elevation(scheme, elevation);
@@ -379,5 +382,7 @@ static void do_redshift_update(const transition_scheme_t *scheme,
 }
 
 void redshift_update() {
-	do_redshift_update(&scheme, method, method_state, 0, 0, 1);
+	if (Sunrise_State() == ON)
+		do_redshift_update(&scheme, method, method_state, 0, 0, 0);
 }
+

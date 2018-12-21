@@ -1,8 +1,8 @@
-#ifndef BLE_H
-#define BLE_H
+#ifndef SUNRISE_BLE_H
+#define SUNRISE_BLE_H
 
 #include <stdbool.h>
 
-void ble_init();
+void sunrise_ble_init(void);
 
-#endif /* BLE_H */
+#endif /* SUNRISE_BLE_H */
