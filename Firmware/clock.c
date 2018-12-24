@@ -3,9 +3,11 @@
 #include <sys/time.h>
 
 #include "components/libraries/timer/app_timer.h"
-#include "nrf_atomic.h"
+#include "components/libraries/atomic/nrf_atomic.h"
 #include "integration/nrfx/legacy/nrf_drv_clock.h"
+#include "components/libraries/experimental_log/nrf_log.h"
 
+#include "sunrise_ble_sunriseService.h"
 
 static nrf_atomic_flag_t timer_timeout_flag = 0;
 static nrf_atomic_u32_t timer_seconds = START_DATE;
@@ -32,7 +34,7 @@ int _gettimeofday(struct timeval* tv, void* tz) {
 	return 0;
 }
 
-void clock_init(void) {
+void clock_init() {
 	// Create timers.
 	ret_code_t err_code;
 
@@ -63,6 +65,26 @@ void clock_offset(int o) {
 	nrf_atomic_u32_add(&timer_seconds, o);
 }
 
-bool clock_secondsflag(void) {
+bool clock_secondsflag() {
 	return nrf_atomic_flag_clear_fetch(&timer_timeout_flag);
+}
+
+/*
+ **** BLE stuff ****
+ */
+
+void clock_ble_evt_handler(ble_evt_t const * p_ble_evt, void* p_context) {
+	NRF_LOG_INFO("Clock: BLE hook!");
+}
+
+ret_code_t clock_ble_connect() {
+	#define BLE_UNIT_SECOND 0x2703
+
+	static const char time_name_str[5] = "Time";
+	static ble_dispatch_receiver_t dispatch_reciever = {
+		.evt_hook = clock_ble_evt_handler,
+		.next = NULL
+	};
+
+	return sunrise_ble_characteristic_init(0xBEEF, time_name_str, RW_BOTH, BLE_UNIT_SECOND, BLE_GATT_CPF_FORMAT_UINT32, 4, &timer_seconds, &dispatch_reciever);
 }
