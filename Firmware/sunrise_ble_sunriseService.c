@@ -16,6 +16,7 @@
 #include "sunrise_ble.h"
 
 #include "clock.h"
+#include "redshift_hook.h"
 #include "redshift-location-sunrise.h"
 
 #define SUNRISE_BLE_UUID128 {{ 0x86, 0xc6, 0xe6, 0x24, 0xbc, 0x3b, 0xcc, 0xcf, 0x3e, 0x1d, 0x57, 0xa2, 0x00, 0x00, 0x26, 0x78 }}
@@ -166,6 +167,7 @@ void sunrise_ble_sunriseService_init() {
  */
 	APP_ERROR_CHECK(clock_ble_connect());
 	APP_ERROR_CHECK(redshift_sunrise_ble_connect());
+	APP_ERROR_CHECK(redshift_ble_init());
 
 	NRF_SDH_BLE_OBSERVER(m_ble_observer, 3, sunrise_ble_sunriseService_on_ble_evt, NULL);
 }

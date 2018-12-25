@@ -26,8 +26,6 @@ static int32_t _lat, _lon;
  * *** BLE stuff ****
  */
 
-#define BLE_UNIT_DEGREE 0x2763
-
 static void redshift_sunrise_ble_evt_handler(ble_evt_t const * p_ble_evt, void* p_context) {
 	NRF_LOG_INFO("Redshift Sunrise Location: BLE hook!");
 
@@ -49,23 +47,10 @@ static void redshift_sunrise_ble_evt_handler(ble_evt_t const * p_ble_evt, void* 
 }
 
 ret_code_t redshift_sunrise_ble_connect() {
-	#define BLE_UNIT_SECOND 0x2703
+	ADD_CHARACTERISTIC(lat, SUNRISE_BLE_UUID_LATITUDE , "Latitude" , RW_BOTH, BLE_UNIT_PLANE_ANGLE_DEGREE, BLE_GATT_CPF_FORMAT_SINT32, -7, 4, _lat, redshift_sunrise_ble_evt_handler);
+	ADD_CHARACTERISTIC(lon, SUNRISE_BLE_UUID_LONGITUDE, "Longitude", RW_BOTH, BLE_UNIT_PLANE_ANGLE_DEGREE, BLE_GATT_CPF_FORMAT_SINT32, -7, 4, _lon, redshift_sunrise_ble_evt_handler);
 
-	static const char lat_name_str[9] = "Latitude";
-	static const char lon_name_str[10] = "Longitude";
-	static ble_dispatch_receiver_t dispatch_reciever_lat = {
-		.evt_hook = redshift_sunrise_ble_evt_handler,
-	};
-	static ble_dispatch_receiver_t dispatch_reciever_lon = {
-		.evt_hook = redshift_sunrise_ble_evt_handler,
-	};
-
-	ret_code_t
-		err_code = sunrise_ble_characteristic_init(SUNRISE_BLE_UUID_LATITUDE, lat_name_str, RW_BOTH, BLE_UNIT_DEGREE, BLE_GATT_CPF_FORMAT_SINT32, -7, 4, &_lat, &dispatch_reciever_lat);
-
-	if (err_code == NRF_SUCCESS)
-		err_code = sunrise_ble_characteristic_init(SUNRISE_BLE_UUID_LONGITUDE, lon_name_str, RW_BOTH, BLE_UNIT_DEGREE, BLE_GATT_CPF_FORMAT_SINT32, -7, 4, &_lon, &dispatch_reciever_lon);
-	return err_code;
+	return NRF_SUCCESS;
 }
 
 /*

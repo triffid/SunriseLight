@@ -10,6 +10,8 @@
 
 #include "gamma-rgbtimer.h"
 #include "rgbtimer.h"
+#include "sunrise_ble.h"
+#include "sunrise_ble_sunriseService.h"
 #include "redshift-location-sunrise.h"
 #include "Sunrise_State.h"
 
@@ -344,7 +346,7 @@ void redshift_update() {
 
 void redshift_StateChangeHandler(State_t new) {
 	if (new == ON)
-		do_redshift_update(&scheme, method, method_state, 0, 0, 0);
+		redshift_update();
 }
 
 void redshift_init() {
@@ -360,18 +362,46 @@ void redshift_init() {
 	scheme.use_time = 0;
 	scheme.day.temperature = 7400;
 	scheme.night.temperature = 3000;
-	scheme.day.brightness = 0.5;
-	scheme.night.brightness = 0.5;
-	scheme.day.gamma[0] = 0.45;
-	scheme.day.gamma[1] = 0.45;
-	scheme.day.gamma[2] = 0.45;
-	scheme.night.gamma[0] = 0.45;
-	scheme.night.gamma[1] = 0.45;
-	scheme.night.gamma[2] = 0.45;
+	scheme.day.brightness = 1.f;
+	scheme.night.brightness = 0.5f;
+	scheme.day.gamma[0] = 0.45f;
+	scheme.day.gamma[1] = 0.45f;
+	scheme.day.gamma[2] = 0.45f;
+	scheme.night.gamma[0] = 0.45f;
+	scheme.night.gamma[1] = 0.45f;
+	scheme.night.gamma[2] = 0.45f;
 
 	method->init(&method_state);
 
 	Sunrise_State_RegisterStateChangeHandler(&redshift_StateChangeHandler);
 
 	NRF_LOG_INFO("Redshift initialised");
+}
+
+static void redshift_ble_evt_handler(ble_evt_t const * p_ble_evt, void* p_context) {
+	NRF_LOG_INFO("Redshift: BLE hook!");
+
+	switch (p_ble_evt->header.evt_id) {
+		case BLE_GATTS_EVT_WRITE: {
+			const ble_gatts_evt_write_t * p_evt_write = &p_ble_evt->evt.gatts_evt.params.write;
+			switch (p_evt_write->handle) {
+			}
+		} break;
+	}
+}
+
+ret_code_t redshift_ble_init() {
+	/* Day Color Temperature */
+	ADD_CHARACTERISTIC(day_temp, SUNRISE_BLE_UUID_DAY_TEMPERATURE, "Day Temperature", RW_BOTH, BLE_UNIT_THERMODYNAMIC_TEMPERATURE_KELVIN, BLE_GATT_CPF_FORMAT_SINT32, 0, 4, scheme.day.temperature, redshift_ble_evt_handler);
+
+	/* Night Color Temperature */
+	ADD_CHARACTERISTIC(night_temp, SUNRISE_BLE_UUID_NIGHT_TEMPERATURE, "Night Temperature", RW_BOTH, BLE_UNIT_THERMODYNAMIC_TEMPERATURE_KELVIN, BLE_GATT_CPF_FORMAT_SINT32, 0, 4, scheme.night.temperature, redshift_ble_evt_handler);
+
+	/* Day Brightness */
+	ADD_CHARACTERISTIC(day_bright, SUNRISE_BLE_UUID_DAY_BRIGHTNESS, "Day Brightness", RW_BOTH, BLE_UNIT_PERCENTAGE, BLE_GATT_CPF_FORMAT_FLOAT32, 2, 4, scheme.day.brightness, redshift_ble_evt_handler);
+
+	/* Night Brightness */
+	ADD_CHARACTERISTIC(night_bright, SUNRISE_BLE_UUID_NIGHT_BRIGHTNESS, "Night Brightness", RW_BOTH, BLE_UNIT_PERCENTAGE, BLE_GATT_CPF_FORMAT_FLOAT32, 2, 4, scheme.night.brightness, redshift_ble_evt_handler);
+
+	return NRF_SUCCESS;
 }

@@ -20,9 +20,6 @@ static void timer_event_handler(nrf_drv_clock_evt_type_t event) {
 }
 
 static void timer_timeout_handler(void* p_context) {
-	// 	static unsigned angle = 0;
-	// 	angle = (angle + 1) % 60;
-	// 	rgbtimer_sethsv(angle * M_PI_F / 30, 1, 0.125f);
 	nrf_atomic_flag_set(&timer_timeout_flag);
 	nrf_atomic_u32_add(&timer_seconds, 1);
 }
@@ -80,13 +77,7 @@ void clock_ble_evt_handler(ble_evt_t const * p_ble_evt, void* p_context) {
 }
 
 ret_code_t clock_ble_connect() {
-	#define BLE_UNIT_SECOND 0x2703
+	ADD_CHARACTERISTIC(clock, SUNRISE_BLE_UUID_CLOCK, "Time", RW_BOTH, BLE_UNIT_TIME_SECOND, BLE_GATT_CPF_FORMAT_UINT32, 0, 4, *((uint32_t *) &timer_seconds), clock_ble_evt_handler);
 
-	static const char time_name_str[5] = "Time";
-	static ble_dispatch_receiver_t dispatch_reciever = {
-		.evt_hook = clock_ble_evt_handler,
-		.next = NULL
-	};
-
-	return sunrise_ble_characteristic_init(SUNRISE_BLE_UUID_CLOCK, time_name_str, RW_BOTH, BLE_UNIT_SECOND, BLE_GATT_CPF_FORMAT_UINT32, 0, 4, &timer_seconds, &dispatch_reciever);
+	return NRF_SUCCESS;
 }
