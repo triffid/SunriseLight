@@ -3,6 +3,13 @@
 
 #include <stdbool.h>
 
+enum SUNRISE_BLE_UUIDs {
+	SUNRISE_BLE_UUID_SERVICE = 0x1000,
+	SUNRISE_BLE_UUID_CLOCK,
+	SUNRISE_BLE_UUID_LATITUDE,
+	SUNRISE_BLE_UUID_LONGITUDE,
+};
+
 void sunrise_ble_init(void);
 
 #endif /* SUNRISE_BLE_H */

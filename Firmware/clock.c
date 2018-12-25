@@ -7,6 +7,8 @@
 #include "integration/nrfx/legacy/nrf_drv_clock.h"
 #include "components/libraries/experimental_log/nrf_log.h"
 
+#include "sunrise_ble.h"
+
 #include "sunrise_ble_sunriseService.h"
 
 static nrf_atomic_flag_t timer_timeout_flag = 0;
@@ -86,5 +88,5 @@ ret_code_t clock_ble_connect() {
 		.next = NULL
 	};
 
-	return sunrise_ble_characteristic_init(0xBEEF, time_name_str, RW_BOTH, BLE_UNIT_SECOND, BLE_GATT_CPF_FORMAT_UINT32, 4, &timer_seconds, &dispatch_reciever);
+	return sunrise_ble_characteristic_init(SUNRISE_BLE_UUID_CLOCK, time_name_str, RW_BOTH, BLE_UNIT_SECOND, BLE_GATT_CPF_FORMAT_UINT32, 0, 4, &timer_seconds, &dispatch_reciever);
 }

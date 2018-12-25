@@ -20,6 +20,6 @@ typedef struct _ble_dispatch_receiver_t {
 
 void sunrise_ble_sunriseService_init(void);
 
-ret_code_t sunrise_ble_characteristic_init(uint16_t uuid, const char* name, rw_t rw, uint16_t unit, uint16_t format, uint16_t size, void* var, ble_dispatch_receiver_t* receiver);
+ret_code_t sunrise_ble_characteristic_init(uint16_t uuid, const char* name, rw_t rw, uint16_t unit, uint16_t format, int8_t exponent, uint16_t size, void* var, ble_dispatch_receiver_t* receiver);
 
 #endif /* SUNRISE_BLE_SUNRISESERVICE_H */

@@ -17,7 +17,6 @@ SRC_FILES += \
 	$(PROJ_DIR)/redshift/src/colorramp.c \
 	$(PROJ_DIR)/redshift/src/solar.c \
 	$(PROJ_DIR)/redshift/src/systemtime.c \
-	$(PROJ_DIR)/redshift/src/location-manual.c \
 	$(SDK_ROOT)/modules/nrfx/mdk/gcc_startup_nrf52.S \
 	$(SDK_ROOT)/components/libraries/experimental_log/src/nrf_log_backend_rtt.c \
 	$(SDK_ROOT)/components/libraries/experimental_log/src/nrf_log_backend_serial.c \

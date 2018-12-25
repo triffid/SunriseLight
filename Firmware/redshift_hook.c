@@ -5,13 +5,12 @@
 #include "redshift/src/systemtime.h"
 #include "redshift/src/solar.h"
 #include "redshift/src/colorramp.h"
-#include "redshift/src/location-manual.h"
 
 #include "components/libraries/experimental_log/nrf_log.h"
 
 #include "gamma-rgbtimer.h"
 #include "rgbtimer.h"
-
+#include "redshift-location-sunrise.h"
 #include "Sunrise_State.h"
 
 #define N_(s) s
@@ -49,7 +48,7 @@ static const gamma_method_t* method = &rgbtimer_gamma_method;
 static gamma_state_t* method_state;
 
 static location_state_t* location_state;
-static const location_provider_t* provider = &manual_location_provider;
+static const location_provider_t* provider = &sunrise_location_provider;
 
 /* Names of periods of day */
 static const char *period_names[] = {
@@ -209,21 +208,6 @@ color_setting_reset(color_setting_t *color)
 	color->brightness = 0.0;
 }
 
-/* Wait for location to become available from provider.
- *  Waits until timeout (milliseconds) has elapsed or forever if timeout
- *  is -1. Writes location to loc. Returns -1 on error,
- *  0 if timeout was reached, 1 if location became available. */
-static int
-provider_get_location(
-	const location_provider_t *provider, location_state_t *state,
-	int timeout, location_t *loc)
-{
-	int available = 0;
-	provider->handle(state, loc, &available);
-
-	return 1;
-}
-
 /* Easing function for fade.
  *   See https://github.com/mietek/ease-tween */
 static double
@@ -234,34 +218,6 @@ ease_fade(double t)
 	return 1.0042954579734844 * exp(
 		-6.4041738958415664 * exp(-7.2908241330981340 * t));
 }
-
-void redshift_init() {
-	color_setting_reset(&prev_target_interp);
-	color_setting_reset(&interp);
-
-	/* Get initial location from provider */
-	provider->init(&location_state);
-	provider->set_option(location_state, "lat", "22.5433782");
-	provider->set_option(location_state, "lon", "114.0782833");
-	provider_get_location(provider, location_state, -1, &loc);
-
-	scheme.low = SOLAR_CIVIL_TWILIGHT_ELEV;
-	scheme.high = 3.0f;
-	scheme.use_time = 0;
-	scheme.day.temperature = 7400;
-	scheme.night.temperature = 3000;
-	scheme.day.brightness = 0.5;
-	scheme.night.brightness = 0.5;
-	scheme.day.gamma[0] = 0.45;
-	scheme.day.gamma[1] = 0.45;
-	scheme.day.gamma[2] = 0.45;
-	scheme.night.gamma[0] = 0.45;
-	scheme.night.gamma[1] = 0.45;
-	scheme.night.gamma[2] = 0.45;
-
-	method->init(&method_state);
-}
-
 
 static void do_redshift_update(const transition_scheme_t *scheme,
                                const gamma_method_t *method,
@@ -386,3 +342,36 @@ void redshift_update() {
 		do_redshift_update(&scheme, method, method_state, 0, 0, 0);
 }
 
+void redshift_StateChangeHandler(State_t new) {
+	if (new == ON)
+		do_redshift_update(&scheme, method, method_state, 0, 0, 0);
+}
+
+void redshift_init() {
+	color_setting_reset(&prev_target_interp);
+	color_setting_reset(&interp);
+
+	/* Get initial location from provider */
+	provider->init(&location_state);
+	location_sunrise_update(location_state, 22.5433782f, 114.0782833f);
+
+	scheme.low = SOLAR_CIVIL_TWILIGHT_ELEV;
+	scheme.high = 3.0f;
+	scheme.use_time = 0;
+	scheme.day.temperature = 7400;
+	scheme.night.temperature = 3000;
+	scheme.day.brightness = 0.5;
+	scheme.night.brightness = 0.5;
+	scheme.day.gamma[0] = 0.45;
+	scheme.day.gamma[1] = 0.45;
+	scheme.day.gamma[2] = 0.45;
+	scheme.night.gamma[0] = 0.45;
+	scheme.night.gamma[1] = 0.45;
+	scheme.night.gamma[2] = 0.45;
+
+	method->init(&method_state);
+
+	Sunrise_State_RegisterStateChangeHandler(&redshift_StateChangeHandler);
+
+	NRF_LOG_INFO("Redshift initialised");
+}
