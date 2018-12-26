@@ -12,6 +12,7 @@ enum SUNRISE_BLE_UUID_t {
 	SUNRISE_BLE_UUID_NIGHT_TEMPERATURE,
 	SUNRISE_BLE_UUID_DAY_BRIGHTNESS,
 	SUNRISE_BLE_UUID_NIGHT_BRIGHTNESS,
+	SUNRISE_BLE_UUID_MODE,
 };
 
 
@@ -103,7 +104,7 @@ enum BLE_UNIT_t {
 
 	BLE_UNIT_PRESSURE_BAR                                           = 0x2780, // pressure (bar)
 	BLE_UNIT_PRESSURE_MILLIMETRE_OF_MERCURY                         = 0x2781, // pressure (millimetre of mercury)
-	BLE_UNIT_LENGTH_NGSTRM                                          = 0x2782, // length (ngstrm)
+	BLE_UNIT_LENGTH_NGSTRM                                          = 0x2782, // length (angstrom)
 	BLE_UNIT_LENGTH_NAUTICAL_MILE                                   = 0x2783, // length (nautical mile)
 	BLE_UNIT_AREA_BARN                                              = 0x2784, // area (barn)
 	BLE_UNIT_VELOCITY_KNOT                                          = 0x2785, // velocity (knot)

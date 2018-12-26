@@ -668,9 +668,8 @@ void sunrise_ble_state_change_handler(State_t new) {
 	else if (nrf_sdh_is_suspended()) {
 		// OFF to ON or SOFT_OFF -> ble running
 		nrf_sdh_resume();
-// 		APP_ERROR_CHECK(ble_advertising_start(&m_advertising, BLE_ADV_MODE_FAST));
 	}
-	else if (new == ON) {
+	else {
 		// SOFT_OFF -> ON or start -> ON
 		APP_ERROR_CHECK(ble_advertising_start(&m_advertising, BLE_ADV_MODE_FAST));
 	}

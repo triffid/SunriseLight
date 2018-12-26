@@ -13,7 +13,7 @@
 #include "sunrise_ble.h"
 #include "sunrise_ble_sunriseService.h"
 #include "redshift-location-sunrise.h"
-#include "Sunrise_State.h"
+#include "sunrise_mode.h"
 
 #define N_(s) s
 #define _(s) s
@@ -340,12 +340,11 @@ static void do_redshift_update(const transition_scheme_t *scheme,
 }
 
 void redshift_update() {
-	if (Sunrise_State() == ON)
-		do_redshift_update(&scheme, method, method_state, 0, 0, 0);
+	do_redshift_update(&scheme, method, method_state, 0, 0, 0);
 }
 
-void redshift_StateChangeHandler(State_t new) {
-	if (new == ON)
+void redshift_ModeChangeHandler(sunrise_mode_t newmode) {
+	if (newmode == SUNRISE_MODE_SUNRISE)
 		redshift_update();
 }
 
@@ -373,7 +372,7 @@ void redshift_init() {
 
 	method->init(&method_state);
 
-	Sunrise_State_RegisterStateChangeHandler(&redshift_StateChangeHandler);
+	SUNRISE_MODE_CALLBACK(redshift_ModeChangeHandler);
 
 	NRF_LOG_INFO("Redshift initialised");
 }

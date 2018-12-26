@@ -16,6 +16,7 @@
 #include "sunrise_ble.h"
 
 #include "clock.h"
+#include "sunrise_mode.h"
 #include "redshift_hook.h"
 #include "redshift-location-sunrise.h"
 
@@ -166,6 +167,7 @@ void sunrise_ble_sunriseService_init() {
  * *** Invoke child characteristics ***
  */
 	APP_ERROR_CHECK(clock_ble_connect());
+	APP_ERROR_CHECK(sunrise_mode_ble_connect());
 	APP_ERROR_CHECK(redshift_sunrise_ble_connect());
 	APP_ERROR_CHECK(redshift_ble_init());
 

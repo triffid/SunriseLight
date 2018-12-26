@@ -23,8 +23,10 @@ void sunrise_ble_sunriseService_init(void);
 ret_code_t sunrise_ble_characteristic_init(uint16_t uuid, const char* name, rw_t rw, uint16_t unit, uint16_t format, int8_t exponent, uint16_t size, void* var, ble_dispatch_receiver_t* receiver);
 
 #define ADD_CHARACTERISTIC(desc, uuid, name, rw, unit, format, exponent, size, var, hookfn) \
-	static const char desc ## _name_str[] = name; \
-	static ble_dispatch_receiver_t desc ## _dispatch_receiver = {.evt_hook = hookfn,}; \
-	APP_ERROR_CHECK(sunrise_ble_characteristic_init(uuid, desc ## _name_str, rw, unit, format, exponent, size, &var, & desc ## _dispatch_receiver));
+	do { \
+		static const char desc ## _name_str[] = name; \
+		static ble_dispatch_receiver_t desc ## _dispatch_receiver = {.evt_hook = hookfn,}; \
+		APP_ERROR_CHECK(sunrise_ble_characteristic_init(uuid, desc ## _name_str, rw, unit, format, exponent, size, &var, & desc ## _dispatch_receiver)); \
+	} while (0)
 
 #endif /* SUNRISE_BLE_SUNRISESERVICE_H */

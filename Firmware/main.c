@@ -55,6 +55,7 @@
 #include <stdint.h>
 
 #include <string.h>
+#include <math.h>
 
 #include "components/libraries/util/app_error.h"
 #include "components/libraries/timer/app_timer.h"
@@ -74,6 +75,9 @@
 #include "sunrise_ble.h"
 #include "sunrise_ble_dfu.h"
 #include "Sunrise_State.h"
+#include "sunrise_mode.h"
+
+#include "util.h"
 
 /**@brief Function for the Timer initialization.
  *
@@ -112,7 +116,6 @@ static void power_init(void)
 	nrfx_power_init(&pwr);
 }
 
-
 /**@brief Function for handling the idle state (main loop).
  *
  * @details If there is no pending log operation, then sleep until next the next event occurs.
@@ -125,7 +128,16 @@ static void idle_state_handle(void)
     }
 
     if (clock_secondsflag()) {
-		redshift_update();
+		switch(sunrise_mode_get()) {
+			case SUNRISE_MODE_SUNRISE:
+				redshift_update();
+				break;
+			case SUNRISE_MODE_PARTY:
+				rgbtimer_sethsv(xorshift32() * M_TWOPIF / 4294967296.0f, 1, 1);
+				break;
+			default:
+				break;
+		}
 		Sunrise_State_poll();
 	}
 }
@@ -158,6 +170,8 @@ int main(void)
 	rgbtimer_start();
 
 	redshift_init();
+
+	sunrise_mode_init();
 
 	// Start execution.
 	NRF_LOG_INFO("Sunlight started.");

@@ -12,7 +12,7 @@
 
 static State_t _state = OFF;
 
-static const char * const statenames[3] = { "OFF", "SOFT_OFF", "ON" };
+static const char * const statenames[3] = { "OFF", "ON" };
 
 Sunrise_StateChangeHandler handlers[NUM_HANDLERS];
 
@@ -44,20 +44,11 @@ void Sunrise_State_poll(void) {
 	}
 	else if (_state == OFF)
 		Sunrise_StateChange(ON);
-	else {
-		// TODO: handle GPIOTE button events
-		// button should change between SOFT_OFF and ON
-	}
 }
 
 State_t Sunrise_State(void) {
 	return _state;
 }
-
-// #define THROW_ERROR(err) printf("Register Handler failed: " err " at %d %s", __LINE__, __FILE__)
-// #define THROW_ERROR(err) for (;;)
-// #define THROW_ERROR(err) app_error_handler(err, __LINE__, __FILE__)
-// #define THROW_ERROR(err) __breakpoint()
 
 void Sunrise_State_RegisterStateChangeHandler(Sunrise_StateChangeHandler handler) {
 	for (int i = 0; i < NUM_HANDLERS; i++) {

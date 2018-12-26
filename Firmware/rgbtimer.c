@@ -10,7 +10,9 @@
 #include "modules/nrfx/hal/nrf_timer.h"
 
 #include "sigmadelta.h"
-#include "Sunrise_State.h"
+#include "sunrise_mode.h"
+
+#include "util.h"
 
 #define RESOLUTION 4096
 
@@ -26,12 +28,11 @@ typedef struct __attribute__ ((packed)) {
 
 void hsv2rgb(rgb* o, float h, float s, float v);
 
-
-void rgbtimer_StateChangeHandler(State_t new) {
-	if (new == ON)
-		rgbtimer_start();
-	else
+void rgbtimer_ModeChangeHandler(sunrise_mode_t new) {
+	if (new == SUNRISE_MODE_OFF)
 		rgbtimer_stop();
+	else
+		rgbtimer_start();
 }
 
 void rgbtimer_init() {
@@ -48,7 +49,7 @@ void rgbtimer_init() {
 	SigmaDelta_init(&green);
 	SigmaDelta_init(&blue);
 
-	Sunrise_State_RegisterStateChangeHandler(&rgbtimer_StateChangeHandler);
+	SUNRISE_MODE_CALLBACK(rgbtimer_ModeChangeHandler);
 }
 
 void rgbtimer_setrgb(float r, float g, float b) {

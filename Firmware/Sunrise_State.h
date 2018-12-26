@@ -5,7 +5,6 @@
 
 typedef enum {
 	OFF,
-	SOFT_OFF,
 	ON
 } State_t;
 
