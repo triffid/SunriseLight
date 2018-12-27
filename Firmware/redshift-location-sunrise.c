@@ -104,7 +104,7 @@ location_sunrise_handle(location_sunrise_state_t *state, location_t *location, i
 	if (location)
 		*location = state->loc;
 	if (available)
-		*available = (isnan(state->loc.lat) && isnan(state->loc.lon))?1:0;
+		*available = (isnan(state->loc.lat) || isnan(state->loc.lon))?0:1;
 
 	return 0;
 }

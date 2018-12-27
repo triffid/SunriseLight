@@ -38,8 +38,6 @@ static period_t prev_period = PERIOD_NONE;
 static color_setting_t prev_target_interp;
 static color_setting_t interp;
 
-static location_t loc = { NAN, NAN };
-
 /* Short fade parameters */
 static int fade_length = 0;
 static int fade_time = 0;
@@ -234,10 +232,18 @@ static void do_redshift_update(const transition_scheme_t *scheme,
 		return;
 	}
 
+	location_t loc;
+
+	if (1) {
+		int available;
+		provider->handle(location_state, &loc, &available);
+		if (!available)
+			return;
+	}
+
 	if (verbose) {
-		location_t* loc = (location_t*) location_state;
 		unsigned t = now;
-		unsigned adj = t + ((int) roundf(loc->lon * 12 / 180)) * 3600; // approximate timezone compensation
+		unsigned adj = t + ((int) roundf(loc.lon * 12 / 180)) * 3600; // approximate timezone compensation
 		printf("Time is %u = %d:%02d:%02d", t, (adj % 86400) / 3600, ((adj % 86400) % 3600) / 60, ((adj % 86400) % 60));
 	}
 
@@ -271,11 +277,6 @@ static void do_redshift_update(const transition_scheme_t *scheme,
 	 *  that case. */
 	if (verbose && (period != prev_period || period == PERIOD_TRANSITION)) {
 		print_period(period, transition_prog);
-	}
-
-	/* Activate hooks if period changed */
-	if (period != prev_period) {
-// 		hooks_signal_period_change(prev_period, period);
 	}
 
 	/* Start fade if the parameter differences are too big to apply
