@@ -64,7 +64,7 @@ void sunrise_mode_ble_evt_handler(ble_evt_t const * p_ble_evt, void* p_context) 
 	switch (p_ble_evt->header.evt_id) {
 		case BLE_GATTS_EVT_WRITE: {
 			const ble_gatts_evt_write_t * p_evt_write = &p_ble_evt->evt.gatts_evt.params.write;
-			NRF_LOG_INFO("BLE: got mode %u (%u, %0x%08x)\n", p_evt_write->data[0], *((uint32_t*) p_evt_write->data), *((uint32_t*) p_evt_write->data));
+			NRF_LOG_INFO("got mode %u (%u, 0x%08x)\n", p_evt_write->data[0], *((uint32_t*) p_evt_write->data), *((uint32_t*) p_evt_write->data));
 			sunrise_mode_set(p_evt_write->data[0]);
 			if (_mode == SUNRISE_MODE_MANUAL)
 				rgbtimer_sethsv(p_evt_write->data[1] * (M_TWOPIF / 255.0f), p_evt_write->data[2] / 255.0f, p_evt_write->data[3] / 255.0f);

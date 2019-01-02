@@ -151,7 +151,7 @@ static void pm_evt_handler(pm_evt_t const * p_evt)
 
 		case PM_EVT_PEERS_DELETE_SUCCEEDED:
 		{
-			APP_ERROR_CHECK(ble_advertising_start(&m_advertising, BLE_ADV_MODE_FAST));
+			NRF_LOG_INFO("Delete succeeded");
 		} break;
 
 		case PM_EVT_PEER_DATA_UPDATE_FAILED:
@@ -669,7 +669,7 @@ void sunrise_ble_state_change_handler(State_t new) {
 		// OFF to ON or SOFT_OFF -> ble running
 		nrf_sdh_resume();
 	}
-	else {
+	else if (m_advertising.adv_mode_current == BLE_ADV_MODE_IDLE) {
 		// SOFT_OFF -> ON or start -> ON
 		APP_ERROR_CHECK(ble_advertising_start(&m_advertising, BLE_ADV_MODE_FAST));
 	}

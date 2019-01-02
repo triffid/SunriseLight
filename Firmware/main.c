@@ -144,7 +144,12 @@ static void idle_state_handle(void)
 
 void app_error_fault_handler(uint32_t id, uint32_t pc, uint32_t info) {
 	NRF_LOG_ERROR("id 0x%08x pc 0x%08x info 0x%08x\n", id, pc, info);
-	for (;;);
+	NRF_LOG_FLUSH();
+	__debugbreak();
+}
+
+void HardFault_Handler() {
+	__debugbreak();
 }
 
 /**@brief Function for application main entry.
@@ -159,16 +164,15 @@ int main(void)
 	Sunrise_State_init();
 
 	APP_GPIOTE_INIT(8);
-    timers_init();
+
+	timers_init();
 	clock_init();
-    power_management_init();
+	power_management_init();
 
 	sunrise_ble_init();
 	sunrise_ble_dfu_init();
 
 	rgbtimer_init();
-	rgbtimer_start();
-
 	redshift_init();
 
 	sunrise_mode_init();

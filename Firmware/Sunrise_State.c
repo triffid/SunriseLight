@@ -8,7 +8,7 @@
 
 #include "clock.h"
 
-#define NUM_HANDLERS 8
+#define NUM_HANDLERS 2
 
 static State_t _state = OFF;
 

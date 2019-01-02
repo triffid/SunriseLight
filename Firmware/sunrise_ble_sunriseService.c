@@ -93,7 +93,7 @@ ret_code_t sunrise_ble_characteristic_init(uint16_t uuid, const char* name, rw_t
 	err_code = sd_ble_gatts_characteristic_add(p_service.service_handle, &c.char_md, &c.attr_char_value, &dispatch_receiver->handles);
 	APP_ERROR_CHECK(err_code);
 
-	NRF_LOG_INFO("Chr handle is 0x%04x", dispatch_receiver->handles.value_handle);
+// 	NRF_LOG_INFO("Chr handle is 0x%04x", dispatch_receiver->handles.value_handle);
 
 	// Only store hook in LL if it's non-null
 	// remove this condition if we decide to throw an error in the event handler for unknown handles
@@ -109,7 +109,7 @@ ret_code_t sunrise_ble_characteristic_init(uint16_t uuid, const char* name, rw_t
 }
 
 static void sunrise_ble_sunriseService_on_ble_evt(ble_evt_t const * p_ble_evt, void* p_context) {
-	NRF_LOG_INFO("Sunrise Event");
+// 	NRF_LOG_INFO("Sunrise Event");
 
 	switch (p_ble_evt->header.evt_id) {
 		case BLE_GAP_EVT_CONNECTED: {
@@ -123,10 +123,10 @@ static void sunrise_ble_sunriseService_on_ble_evt(ble_evt_t const * p_ble_evt, v
 			ble_dispatch_receiver_t* dr = first;
 			int timeout = 16;
 			while (dr && (--timeout > 0)) {
-				NRF_LOG_INFO("handle 0x%04x at %p has handler %p and next %p", dr->handles.value_handle, dr, dr->evt_hook, dr->next);
+// 				NRF_LOG_INFO("handle 0x%04x at %p has handler %p and next %p", dr->handles.value_handle, dr, dr->evt_hook, dr->next);
 				if (dr->evt_hook) {
 					if (dr->handles.value_handle == p_evt_write->handle) {
-						NRF_LOG_INFO("Found hook for handle 0x%04x", p_evt_write->handle)
+// 						NRF_LOG_INFO("Found hook for handle 0x%04x", p_evt_write->handle)
 						dr->evt_hook(p_ble_evt, p_context);
 						break;
 					}
@@ -159,7 +159,7 @@ void sunrise_ble_sunriseService_init() {
 	err_code = sd_ble_gatts_service_add(BLE_GATTS_SRVC_TYPE_PRIMARY,
 										&service_uuid,
 									 &p_service.service_handle);
-	NRF_LOG_INFO("Svc handle is 0x%04x", p_service.service_handle);
+// 	NRF_LOG_INFO("Svc handle is 0x%04x", p_service.service_handle);
 
 	APP_ERROR_CHECK(err_code);
 
