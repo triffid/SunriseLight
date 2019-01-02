@@ -2028,7 +2028,7 @@ design rules under a new name.</description>
 <attribute name="NAME" x="26" y="17.5" size="0.6" layer="25" font="vector" ratio="15" rot="R180" align="center"/>
 <attribute name="VALUE" x="26" y="18.5" size="0.6" layer="27" font="vector" ratio="15" rot="R180" align="center"/>
 </element>
-<element name="M1" library="E73-2G4M04S" package="E73-2GM404S" value="E73-2G4M04S" x="64.28" y="29.48" smashed="yes">
+<element name="M1" library="E73-2G4M04S" package="E73-2GM404S" value="E73-2G4M04S1B" x="64.28" y="29.48" smashed="yes">
 <attribute name="NAME" x="71.03" y="39.98" size="0.6" layer="25" font="vector" ratio="15" align="center"/>
 <attribute name="VALUE" x="64.28" y="29.48" size="0.6" layer="27" font="vector" ratio="15" align="center"/>
 </element>

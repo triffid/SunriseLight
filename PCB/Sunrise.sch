@@ -271,16 +271,81 @@
 <pin name="P0.30/AIN6" x="-20.32" y="-15.24" visible="pin" length="short"/>
 <pin name="P0.31/AIN7" x="-20.32" y="-17.78" visible="pin" length="short"/>
 <text x="-10.16" y="30.48" size="1.778" layer="95" font="vector" ratio="15" align="center">&gt;NAME</text>
-<text x="0" y="0" size="1.778" layer="96" font="vector" ratio="15" rot="R90" align="center">&gt;VAUE</text>
+<text x="0" y="0" size="1.778" layer="96" font="vector" ratio="15" rot="R90" align="center">&gt;VALUE</text>
 </symbol>
 </symbols>
 <devicesets>
 <deviceset name="E73-2G4M04S" prefix="M">
+<description>&lt;h1&gt;NRF52 Module With Antenna&lt;/h1&gt;
+
+&lt;h2&gt;variants:&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;1A: &lt;a href="http://www.ebyte.com/product-view-news.aspx?id=305"&gt;NRF52810&lt;/a&gt;&lt;br/&gt;
+    FLASH: 192kb&lt;br/&gt;
+    RAM: 24kb&lt;br/&gt;
+    CORE: ARM Cortex-M4&lt;br/&gt;&lt;/li&gt;
+
+&lt;li&gt;1B: &lt;a href="http://www.ebyte.com/product-view-news.aspx?id=239"&gt;NRF52832&lt;/a&gt;&lt;br/&gt;
+    FLASH: 512kb&lt;br/&gt;
+    RAM: 64kb&lt;br/&gt;
+    CORE: ARM Cortex-M4F&lt;br/&gt;&lt;/li&gt;
+
+&lt;li&gt;1C: &lt;a href="http://www.ebyte.com/product-view-news.aspx?id=444"&gt;NRF52840&lt;/a&gt;&lt;br/&gt;
+    FLASH: 1024kb&lt;br/&gt;
+    RAM: 256kb&lt;br/&gt;
+    CORE: ARM Cortex-M4&lt;br/&gt;&lt;/li&gt;
+&lt;/ul&gt;</description>
 <gates>
 <gate name="G$1" symbol="E73-2G4M04S" x="0" y="0"/>
 </gates>
 <devices>
-<device name="" package="E73-2GM404S">
+<device name="1B" package="E73-2GM404S">
+<connects>
+<connect gate="G$1" pin="AIN0/P0.02" pad="17"/>
+<connect gate="G$1" pin="AIN1/P0.03" pad="18"/>
+<connect gate="G$1" pin="AIN2/P0.04" pad="19"/>
+<connect gate="G$1" pin="AIN3/P0.05" pad="20"/>
+<connect gate="G$1" pin="DCC" pad="13"/>
+<connect gate="G$1" pin="DEC1" pad="14"/>
+<connect gate="G$1" pin="DEC2" pad="3"/>
+<connect gate="G$1" pin="DEC3" pad="4"/>
+<connect gate="G$1" pin="DEC4" pad="12"/>
+<connect gate="G$1" pin="GND" pad="0 1 2 15 42 43"/>
+<connect gate="G$1" pin="NFC1/P0.09" pad="24"/>
+<connect gate="G$1" pin="NFC2/P0.10" pad="25"/>
+<connect gate="G$1" pin="P0.06" pad="21"/>
+<connect gate="G$1" pin="P0.07" pad="22"/>
+<connect gate="G$1" pin="P0.08" pad="23"/>
+<connect gate="G$1" pin="P0.11" pad="26"/>
+<connect gate="G$1" pin="P0.12" pad="27"/>
+<connect gate="G$1" pin="P0.13" pad="28"/>
+<connect gate="G$1" pin="P0.14" pad="29"/>
+<connect gate="G$1" pin="P0.15" pad="30"/>
+<connect gate="G$1" pin="P0.16" pad="31"/>
+<connect gate="G$1" pin="P0.17" pad="32"/>
+<connect gate="G$1" pin="P0.18" pad="33"/>
+<connect gate="G$1" pin="P0.19" pad="34"/>
+<connect gate="G$1" pin="P0.20" pad="35"/>
+<connect gate="G$1" pin="P0.21/!RESET" pad="36"/>
+<connect gate="G$1" pin="P0.22" pad="39"/>
+<connect gate="G$1" pin="P0.23" pad="40"/>
+<connect gate="G$1" pin="P0.24" pad="41"/>
+<connect gate="G$1" pin="P0.25" pad="5"/>
+<connect gate="G$1" pin="P0.26" pad="6"/>
+<connect gate="G$1" pin="P0.27" pad="7"/>
+<connect gate="G$1" pin="P0.28/AIN4" pad="8"/>
+<connect gate="G$1" pin="P0.29/AIN5" pad="9"/>
+<connect gate="G$1" pin="P0.30/AIN6" pad="10"/>
+<connect gate="G$1" pin="P0.31/AIN7" pad="11"/>
+<connect gate="G$1" pin="SWDCLK" pad="37"/>
+<connect gate="G$1" pin="SWDIO" pad="38"/>
+<connect gate="G$1" pin="VDD" pad="16"/>
+</connects>
+<technologies>
+<technology name=""/>
+</technologies>
+</device>
+<device name="1A" package="E73-2GM404S">
 <connects>
 <connect gate="G$1" pin="AIN0/P0.02" pad="17"/>
 <connect gate="G$1" pin="AIN1/P0.03" pad="18"/>
@@ -10467,7 +10532,7 @@ new: Attribute TP_SIGNAL_NAME&lt;br&gt;
 </class>
 </classes>
 <parts>
-<part name="M1" library="E73-2G4M04S" deviceset="E73-2G4M04S" device=""/>
+<part name="M1" library="E73-2G4M04S" deviceset="E73-2G4M04S" device="1B" value="E73-2G4M04S1B"/>
 <part name="GND1" library="supply1" deviceset="GND" device=""/>
 <part name="C1" library="rcl" deviceset="C-EU" device="C0402K" value="100pF"/>
 <part name="C2" library="rcl" deviceset="C-EU" device="C0402K" value="100pF"/>
