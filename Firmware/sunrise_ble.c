@@ -371,7 +371,7 @@ static void sleep_mode_enter(void)
  */
 static void on_adv_evt(ble_adv_evt_t ble_adv_evt)
 {
-	ret_code_t err_code;
+// 	ret_code_t err_code;
 
 	switch (ble_adv_evt)
 	{

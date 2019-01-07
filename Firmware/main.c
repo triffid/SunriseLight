@@ -57,6 +57,8 @@
 #include <string.h>
 #include <math.h>
 
+#include "components/boards/boards.h"
+
 #include "components/libraries/util/app_error.h"
 #include "components/libraries/timer/app_timer.h"
 #include "components/libraries/gpiote/app_gpiote.h"
@@ -135,6 +137,8 @@ static void idle_state_handle(void)
 			case SUNRISE_MODE_PARTY:
 				rgbtimer_sethsv(xorshift32() * M_TWOPIF / 4294967296.0f, 1, 1);
 				break;
+			case SUNRISE_MODE_OFF:
+				bsp_board_leds_off();
 			default:
 				break;
 		}

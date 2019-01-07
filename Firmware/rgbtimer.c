@@ -2,7 +2,7 @@
 
 #include <math.h>
 
-#include "components/libraries/bsp/bsp_btn_ble.h"
+#include "components/boards/boards.h"
 #include "components/libraries/experimental_log/nrf_log.h"
 
 #include "modules/nrfx/mdk/nrf.h"
