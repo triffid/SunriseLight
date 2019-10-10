@@ -3,7 +3,7 @@
 #include <math.h>
 
 #include "components/boards/boards.h"
-#include "components/libraries/experimental_log/nrf_log.h"
+#include "components/libraries/log/nrf_log.h"
 
 #include "modules/nrfx/mdk/nrf.h"
 #include "modules/nrfx/hal/nrf_gpio.h"
@@ -44,6 +44,7 @@ void rgbtimer_init() {
 	nrf_timer_bit_width_set(NRF_TIMER1, NRF_TIMER_BIT_WIDTH_8);
 	nrf_timer_frequency_set(NRF_TIMER1, NRF_TIMER_FREQ_500kHz);
 	nrf_timer_cc_write(     NRF_TIMER1, NRF_TIMER_CC_CHANNEL0, 2);
+	nrf_timer_shorts_enable(NRF_TIMER1, TIMER_SHORTS_COMPARE0_CLEAR_Msk);
 
 	SigmaDelta_init(&red);
 	SigmaDelta_init(&green);
@@ -88,9 +89,6 @@ void TIMER1_IRQHandler(void) {
 	SigmaDelta_run(&blue);
 	SigmaDelta_run(&red);
 	SigmaDelta_run(&green);
-
-	nrf_timer_event_clear(NRF_TIMER1, NRF_TIMER_EVENT_COMPARE0);
-	nrf_timer_task_trigger(NRF_TIMER1, NRF_TIMER_TASK_CLEAR);
 }
 
 // from https://stackoverflow.com/a/34407200

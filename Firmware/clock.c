@@ -5,7 +5,7 @@
 #include "components/libraries/timer/app_timer.h"
 #include "components/libraries/atomic/nrf_atomic.h"
 #include "integration/nrfx/legacy/nrf_drv_clock.h"
-#include "components/libraries/experimental_log/nrf_log.h"
+#include "components/libraries/log/nrf_log.h"
 
 #include "sunrise_ble.h"
 

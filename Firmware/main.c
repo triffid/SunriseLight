@@ -63,9 +63,9 @@
 #include "components/libraries/timer/app_timer.h"
 #include "components/libraries/gpiote/app_gpiote.h"
 
-#include "components/libraries/experimental_log/nrf_log.h"
-#include "components/libraries/experimental_log/nrf_log_ctrl.h"
-#include "components/libraries/experimental_log/nrf_log_default_backends.h"
+#include "components/libraries/log/nrf_log.h"
+#include "components/libraries/log/nrf_log_ctrl.h"
+#include "components/libraries/log/nrf_log_default_backends.h"
 #include "components/libraries/pwr_mgmt/nrf_pwr_mgmt.h"
 
 #include "modules/nrfx/drivers/include/nrfx_power.h"

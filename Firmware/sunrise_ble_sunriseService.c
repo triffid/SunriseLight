@@ -6,7 +6,7 @@
 
 #include "components/libraries/util/nordic_common.h"
 
-#include "components/libraries/experimental_log/nrf_log.h"
+#include "components/libraries/log/nrf_log.h"
 
 #include "components/ble/common/ble_srv_common.h"
 

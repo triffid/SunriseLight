@@ -2,7 +2,7 @@
 
 #include "components/boards/boards.h"
 #include "components/ble/ble_services/ble_dfu/ble_dfu.h"
-#include "components/libraries/experimental_log/nrf_log.h"
+#include "components/libraries/log/nrf_log.h"
 #include "components/libraries/pwr_mgmt/nrf_pwr_mgmt.h"
 #include "components/libraries/util/app_error.h"
 

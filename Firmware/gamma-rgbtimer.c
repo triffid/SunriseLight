@@ -1,6 +1,6 @@
 #include "gamma-rgbtimer.h"
 
-#include "components/libraries/experimental_log/nrf_log.h"
+#include "components/libraries/log/nrf_log.h"
 
 #include "redshift/src/colorramp.h"
 #include "rgbtimer.h"

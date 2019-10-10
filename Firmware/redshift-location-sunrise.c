@@ -2,7 +2,7 @@
 
 #include <math.h>
 
-#include "components/libraries/experimental_log/nrf_log.h"
+#include "components/libraries/log/nrf_log.h"
 
 #include "sunrise_ble.h"
 #include "sunrise_ble_sunriseService.h"

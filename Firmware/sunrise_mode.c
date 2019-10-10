@@ -2,7 +2,7 @@
 
 #include <math.h>
 
-#include "components/libraries/experimental_log/nrf_log.h"
+#include "components/libraries/log/nrf_log.h"
 
 #include "Sunrise_State.h"
 #include "rgbtimer.h"

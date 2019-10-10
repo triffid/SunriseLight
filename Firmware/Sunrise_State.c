@@ -4,7 +4,7 @@
 
 #include "modules/nrfx/hal/nrf_gpio.h"
 #include "components/libraries/bsp/bsp.h"
-#include "components/libraries/experimental_log/nrf_log.h"
+#include "components/libraries/log/nrf_log.h"
 
 #include "clock.h"
 

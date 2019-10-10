@@ -6,7 +6,7 @@
 #include "redshift/src/solar.h"
 #include "redshift/src/colorramp.h"
 
-#include "components/libraries/experimental_log/nrf_log.h"
+#include "components/libraries/log/nrf_log.h"
 
 #include "gamma-rgbtimer.h"
 #include "rgbtimer.h"
