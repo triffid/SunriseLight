@@ -6,7 +6,7 @@
 <setting alwaysvectorfont="no"/>
 <setting verticaltext="up"/>
 </settings>
-<grid distance="0.25" unitdist="mm" unit="mm" style="lines" multiple="8" display="no" altdistance="0.025" altunitdist="inch" altunit="inch"/>
+<grid distance="0.25" unitdist="mm" unit="mm" style="lines" multiple="4" display="yes" altdistance="0.025" altunitdist="inch" altunit="inch"/>
 <layers>
 <layer number="1" name="Top" color="4" fill="1" visible="yes" active="yes"/>
 <layer number="2" name="Route2" color="1" fill="3" visible="no" active="no"/>
@@ -29,15 +29,15 @@
 <layer number="19" name="Unrouted" color="6" fill="1" visible="yes" active="yes"/>
 <layer number="20" name="Dimension" color="15" fill="1" visible="yes" active="yes"/>
 <layer number="21" name="tPlace" color="7" fill="1" visible="yes" active="yes"/>
-<layer number="22" name="bPlace" color="7" fill="1" visible="no" active="yes"/>
+<layer number="22" name="bPlace" color="7" fill="1" visible="yes" active="yes"/>
 <layer number="23" name="tOrigins" color="15" fill="1" visible="yes" active="yes"/>
-<layer number="24" name="bOrigins" color="15" fill="1" visible="no" active="yes"/>
+<layer number="24" name="bOrigins" color="15" fill="1" visible="yes" active="yes"/>
 <layer number="25" name="tNames" color="7" fill="1" visible="yes" active="yes"/>
-<layer number="26" name="bNames" color="7" fill="1" visible="no" active="yes"/>
-<layer number="27" name="tValues" color="10" fill="1" visible="no" active="yes"/>
+<layer number="26" name="bNames" color="7" fill="1" visible="yes" active="yes"/>
+<layer number="27" name="tValues" color="23" fill="1" visible="no" active="yes"/>
 <layer number="28" name="bValues" color="7" fill="1" visible="no" active="yes"/>
 <layer number="29" name="tStop" color="7" fill="3" visible="yes" active="yes"/>
-<layer number="30" name="bStop" color="7" fill="6" visible="no" active="yes"/>
+<layer number="30" name="bStop" color="7" fill="6" visible="yes" active="yes"/>
 <layer number="31" name="tCream" color="7" fill="4" visible="no" active="yes"/>
 <layer number="32" name="bCream" color="7" fill="5" visible="no" active="yes"/>
 <layer number="33" name="tFinish" color="6" fill="3" visible="no" active="yes"/>
@@ -59,7 +59,7 @@
 <layer number="49" name="Reference" color="7" fill="1" visible="no" active="yes"/>
 <layer number="50" name="dxf" color="7" fill="1" visible="no" active="no"/>
 <layer number="51" name="tDocu" color="7" fill="1" visible="yes" active="yes"/>
-<layer number="52" name="bDocu" color="7" fill="1" visible="no" active="yes"/>
+<layer number="52" name="bDocu" color="7" fill="1" visible="yes" active="yes"/>
 <layer number="53" name="tGND_GNDA" color="7" fill="9" visible="no" active="no"/>
 <layer number="54" name="bGND_GNDA" color="1" fill="9" visible="no" active="no"/>
 <layer number="56" name="wert" color="7" fill="1" visible="no" active="no"/>
@@ -2252,7 +2252,6 @@ design rules under a new name.</description>
 <contactref element="R19" pad="1"/>
 <contactref element="R9" pad="1"/>
 <wire x1="29" y1="27.15" x2="29" y2="29" width="0.5" layer="1"/>
-<wire x1="27.25" y1="29.65" x2="28.35" y2="29.65" width="0.5" layer="1"/>
 <wire x1="28.35" y1="29.65" x2="29" y2="29" width="0.5" layer="1"/>
 <wire x1="26" y1="20.5" x2="26" y2="23" width="0.5" layer="1"/>
 <wire x1="26" y1="23" x2="26" y2="24.5" width="0.5" layer="1"/>
@@ -2281,7 +2280,7 @@ design rules under a new name.</description>
 <vertex x="34" y="16"/>
 <vertex x="48" y="16"/>
 </polygon>
-<polygon width="0.25" layer="1" spacing="0.2" thermals="no" rank="6">
+<polygon width="0.25" layer="1" spacing="0.2" rank="6">
 <vertex x="32" y="32"/>
 <vertex x="32" y="17"/>
 <vertex x="23" y="17"/>
@@ -2789,7 +2788,7 @@ design rules under a new name.</description>
 <wire x1="32.65" y1="18" x2="32.65" y2="19.85" width="0.5" layer="1"/>
 <wire x1="32.65" y1="19.85" x2="32.5" y2="20" width="0.5" layer="1"/>
 </signal>
-<signal name="RG">
+<signal name="BG">
 <contactref element="M1" pad="26"/>
 <contactref element="Q3" pad="GATE"/>
 <contactref element="R14" pad="2"/>
@@ -2813,7 +2812,7 @@ design rules under a new name.</description>
 <wire x1="42" y1="40.5" x2="42" y2="29" width="0.25" layer="16"/>
 <contactref element="TP5" pad="TP"/>
 </signal>
-<signal name="GG">
+<signal name="RG">
 <contactref element="M1" pad="27"/>
 <contactref element="Q2" pad="GATE"/>
 <contactref element="R13" pad="2"/>
@@ -2841,7 +2840,7 @@ design rules under a new name.</description>
 <wire x1="40.25" y1="41.5" x2="12.5" y2="41.5" width="0.25" layer="16"/>
 <contactref element="TP4" pad="TP"/>
 </signal>
-<signal name="BG">
+<signal name="GG">
 <contactref element="M1" pad="28"/>
 <contactref element="Q1" pad="GATE"/>
 <contactref element="R12" pad="2"/>
