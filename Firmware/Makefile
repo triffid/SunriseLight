@@ -6,6 +6,8 @@ SDK_ROOT := $(HOME)/Projects/NRF/nRF5_SDK
 PROJ_DIR := $(shell realpath .)
 BOOTLOADER_HEX := $(PROJ_DIR)/../Bootloader/build/nrf52832_xxaa_s132.hex
 
+GNU_PREFIX := arm-unknown-eabi
+
 CONSOLE  := /dev/ttyUSB0
 
 $(OUTPUT_DIRECTORY)/$(TARGETS).out: \
@@ -232,26 +234,28 @@ OPT = -Os -g3
 # Uncomment the line below to enable link time optimization
 #OPT += -flto
 
-# C flags common to all targets
-CFLAGS += $(OPT)
+# flags common to all targets
+FLAGS += -march=armv7e-m -mcpu=cortex-m4 -mthumb -mabi=aapcs -mfloat-abi=hard -mfpu=fpv4-sp-d16 -fno-stack-protector
+
+# definitions
+DEFS += -DBOARD_CUSTOM
+DEFS += -DCONFIG_GPIO_AS_PINRESET
+DEFS += -DFLOAT_ABI_HARD
+DEFS += -DNRF52
+DEFS += -DNRF52832_XXAA
+DEFS += -DNRF52_PAN_74
+DEFS += -DNRF_DFU_SVCI_ENABLED
+DEFS += -DNRF_DFU_TRANSPORT_BLE=1
+DEFS += -DNRF_SD_BLE_API_VERSION=6
+DEFS += -DS132
+DEFS += -DSOFTDEVICE_PRESENT
+DEFS += -DSWI_DISABLE0
+# DEFS += -DDEBUG
+
+# C flags
+CFLAGS += $(FLAGS) $(OPT) $(DEFS)
 CFLAGS += -std=gnu11
-CFLAGS += -DBOARD_CUSTOM
-CFLAGS += -DCONFIG_GPIO_AS_PINRESET
-CFLAGS += -DFLOAT_ABI_HARD
-CFLAGS += -DNRF52
-CFLAGS += -DNRF52832_XXAA
-CFLAGS += -DNRF52_PAN_74
-CFLAGS += -DNRF_DFU_SVCI_ENABLED
-CFLAGS += -DNRF_DFU_TRANSPORT_BLE=1
-CFLAGS += -DNRF_SD_BLE_API_VERSION=6
-CFLAGS += -DS132
-CFLAGS += -DSOFTDEVICE_PRESENT
-CFLAGS += -DSWI_DISABLE0
-# CFLAGS += -DDEBUG
-CFLAGS += -mcpu=cortex-m4
-CFLAGS += -mthumb -mabi=aapcs
 CFLAGS += -Wall
-CFLAGS += -mfloat-abi=hard -mfpu=fpv4-sp-d16
 # keep every function in a separate section, this allows linker to discard unused ones
 CFLAGS += -ffunction-sections -fdata-sections -fno-strict-aliasing
 CFLAGS += -fno-builtin -fshort-enums
@@ -267,29 +271,12 @@ CXXFLAGS += $(CFLAGS)
 CXXFLAGS += -std=gnu++11
 
 # Assembler flags common to all targets
+ASMFLAGS += $(FLAGS) $(DEFS)
 ASMFLAGS += -g3
-ASMFLAGS += -mcpu=cortex-m4
-ASMFLAGS += -mthumb -mabi=aapcs
-ASMFLAGS += -mfloat-abi=hard -mfpu=fpv4-sp-d16
-ASMFLAGS += -DBOARD_CUSTOM
-ASMFLAGS += -DCONFIG_GPIO_AS_PINRESET
-ASMFLAGS += -DFLOAT_ABI_HARD
-ASMFLAGS += -DNRF52
-ASMFLAGS += -DNRF52832_XXAA
-ASMFLAGS += -DNRF52_PAN_74
-ASMFLAGS += -DNRF_DFU_SVCI_ENABLED
-ASMFLAGS += -DNRF_DFU_TRANSPORT_BLE=1
-ASMFLAGS += -DNRF_SD_BLE_API_VERSION=6
-ASMFLAGS += -DS132
-ASMFLAGS += -DSOFTDEVICE_PRESENT
-ASMFLAGS += -DSWI_DISABLE0
-# ASMFLAGS += -DDEBUG
 
 # Linker flags
-LDFLAGS += $(OPT)
-LDFLAGS += -mthumb -mabi=aapcs -L$(SDK_ROOT)/modules/nrfx/mdk -T$(LINKER_SCRIPT)
-LDFLAGS += -mcpu=cortex-m4
-LDFLAGS += -mfloat-abi=hard -mfpu=fpv4-sp-d16
+LDFLAGS += $(FLAGS) $(OPT)
+LDFLAGS += -L$(SDK_ROOT)/modules/nrfx/mdk -T$(LINKER_SCRIPT)
 # let linker dump unused sections
 LDFLAGS += -Wl,--gc-sections
 # use newlib in nano version
